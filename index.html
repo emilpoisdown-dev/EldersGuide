@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Elder's GA Guide">
+<meta name="theme-color" content="#1B2A4A">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-192.png">
+<title>Elder's GA Guide</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --navy:#1B2A4A;--navy-d:#111d33;--navy-l:#243d6b;
+  --gold:#B8972E;--gold-l:#d4ad3a;--gold-dim:#7a6020;
+  --cream:#F7F3EC;--cream-d:#EDE7DB;--cream-dd:#E0D8CC;
+  --rule:#D4C9B0;--rule-l:#e8e0d0;
+  --slate:#4A5568;--slate-l:#718096;--slate-ll:#A0AEC0;
+  --text:#1a1a1a;--white:#fff;
+  --red:#c0392b;--green:#2d6a2d;
+  --sans:'Arial',sans-serif;--serif:'Georgia','Times New Roman',serif;
+}
+html,body{height:100%;overflow:hidden;background:var(--navy-d)}
+body{font-family:var(--serif);color:var(--text);display:flex;flex-direction:column}
+
+/* HEADER */
+#app-header{background:var(--navy);border-bottom:3px solid var(--gold);flex-shrink:0;z-index:100}
+.hdr{display:flex;align-items:center;gap:16px;padding:11px 20px 9px;max-width:1400px;margin:0 auto}
+.hdr-brand{flex:1;min-width:0}
+.hdr-eye{font-family:var(--sans);font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);margin-bottom:2px}
+.hdr-title{font-size:17px;font-weight:normal;color:var(--cream);letter-spacing:.01em}
+.hdr-sub{font-family:var(--sans);font-size:11px;color:#5a7898;margin-top:1px}
+.hdr-btns{display:flex;gap:6px;flex-shrink:0}
+.hbtn{background:rgba(255,255,255,.07);border:1px solid rgba(184,151,46,.3);color:var(--cream-d);
+  font-family:var(--sans);font-size:11px;padding:6px 11px;border-radius:2px;cursor:pointer;white-space:nowrap;transition:background .15s}
+.hbtn:hover{background:rgba(184,151,46,.15);border-color:var(--gold)}
+.hbtn.on{background:var(--gold);color:var(--navy-d);border-color:var(--gold);font-weight:bold}
+
+/* LAYOUT */
+#app-body{display:flex;flex:1;overflow:hidden}
+
+/* SIDEBAR */
+#sidebar{width:272px;flex-shrink:0;background:var(--navy-d);display:flex;flex-direction:column;
+  overflow:hidden;border-right:1px solid rgba(184,151,46,.2);transition:width .22s ease,transform .22s ease}
+#sidebar.collapsed{width:0}
+.sb-sec{border-bottom:1px solid rgba(255,255,255,.05);flex-shrink:0}
+.sb-lbl{font-family:var(--sans);font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:var(--gold);padding:13px 14px 5px;display:block}
+.nav-tabs{display:flex;flex-direction:column;gap:1px;padding:3px 8px 9px}
+.ntab{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:2px;cursor:pointer;
+  font-family:var(--sans);font-size:12px;color:#7a96b4;transition:background .12s,color .12s;
+  border:none;background:none;text-align:left;width:100%}
+.ntab:hover{background:rgba(255,255,255,.05);color:var(--cream)}
+.ntab.on{background:rgba(184,151,46,.14);color:var(--gold)}
+.ntab .ico{font-size:13px;width:18px;text-align:center;flex-shrink:0}
+.ntab .cnt{margin-left:auto;font-size:10px;background:rgba(255,255,255,.07);padding:1px 6px;border-radius:10px;color:var(--slate-l)}
+.ntab.on .cnt{background:rgba(184,151,46,.2);color:var(--gold)}
+.filter-area{padding:7px 8px 9px}
+.filter-row{display:flex;gap:5px;margin-bottom:5px}
+.fsel{flex:1;background:rgba(255,255,255,.05);border:1px solid rgba(212,201,176,.18);color:var(--cream-d);
+  font-family:var(--sans);font-size:11px;padding:6px 7px;border-radius:2px;outline:none}
+.fsel:focus{border-color:var(--gold)}
+.fsel option{background:var(--navy-d);color:var(--cream)}
+.srch-wrap{position:relative}
+.srch{width:100%;background:rgba(255,255,255,.06);border:1px solid rgba(212,201,176,.18);
+  color:var(--cream);font-family:var(--sans);font-size:12px;padding:8px 30px 8px 9px;
+  border-radius:2px;outline:none}
+.srch:focus{border-color:var(--gold)}
+.srch::placeholder{color:#3a5068}
+.srch-x{position:absolute;right:7px;top:50%;transform:translateY(-50%);color:#3a5068;
+  cursor:pointer;font-size:14px;background:none;border:none;display:none}
+.srch-x.vis{display:block}
+#result-list{flex:1;overflow-y:auto;padding:3px 5px 20px}
+#result-list::-webkit-scrollbar{width:3px}
+#result-list::-webkit-scrollbar-thumb{background:rgba(184,151,46,.2);border-radius:2px}
+.ritem{padding:9px 9px 8px;border-radius:2px;cursor:pointer;border-left:2px solid transparent;
+  margin-bottom:2px;transition:background .1s,border-color .1s}
+.ritem:hover{background:rgba(255,255,255,.04);border-left-color:rgba(184,151,46,.35)}
+.ritem.on{background:rgba(184,151,46,.09);border-left-color:var(--gold)}
+.ri-yr{font-family:var(--sans);font-size:9px;letter-spacing:.09em;text-transform:uppercase;color:var(--gold-dim);margin-bottom:2px}
+.ri-t{font-size:11.5px;color:var(--cream-d);line-height:1.35;font-family:var(--sans)}
+.ri-m{font-family:var(--sans);font-size:10px;color:#4a6078;margin-top:2px}
+.ri-tags{display:flex;flex-wrap:wrap;gap:3px;margin-top:4px}
+.ri-tag{font-family:var(--sans);font-size:9px;background:rgba(184,151,46,.1);color:var(--gold-dim);padding:1px 5px;border-radius:10px;text-transform:capitalize}
+.no-res{font-family:var(--sans);font-size:12px;color:#3a5068;font-style:italic;padding:18px 10px;text-align:center;line-height:1.7}
+
+/* MAIN PANEL */
+#main-panel{flex:1;display:flex;flex-direction:column;overflow:hidden;background:var(--cream)}
+#panel-toolbar{background:var(--cream-d);border-bottom:1px solid var(--rule);padding:7px 18px;
+  display:flex;align-items:center;gap:9px;flex-shrink:0}
+.tb-title{font-size:13px;color:var(--navy);font-family:var(--sans);font-weight:bold;flex:1;
+  min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tbtn{background:none;border:1px solid var(--rule);color:var(--slate);font-family:var(--sans);
+  font-size:11px;padding:5px 10px;border-radius:2px;cursor:pointer;white-space:nowrap;transition:background .1s}
+.tbtn:hover{background:var(--cream-dd)}
+.tbtn.bkd{background:rgba(184,151,46,.1);border-color:var(--gold);color:var(--gold-dim)}
+#sb-toggle{background:var(--navy);border-color:var(--navy);color:var(--cream)}
+#sb-toggle:hover{background:var(--navy-l)}
+#doc-view{flex:1;overflow-y:auto;padding:28px 36px;max-width:860px;width:100%;margin:0 auto}
+#doc-view::-webkit-scrollbar{width:5px}
+#doc-view::-webkit-scrollbar-thumb{background:var(--rule);border-radius:2px}
+
+/* WELCOME */
+#welcome{display:flex;flex-direction:column;align-items:center;justify-content:center;
+  min-height:60vh;padding:40px 20px;text-align:center}
+.w-cross{font-size:34px;margin-bottom:18px;opacity:.55}
+.w-h{font-size:24px;color:var(--navy);font-weight:normal;margin-bottom:6px}
+.w-rule{width:44px;height:2px;background:var(--gold);margin:10px auto 14px}
+.w-p{font-family:var(--sans);font-size:13px;color:var(--slate);line-height:1.75;max-width:460px;margin-bottom:22px}
+.w-stats{display:flex;gap:20px;justify-content:center;flex-wrap:wrap;margin-bottom:24px}
+.stat{background:var(--cream-d);border:1px solid var(--rule);border-top:2px solid var(--gold);padding:11px 18px;text-align:center;min-width:90px}
+.stat-n{font-size:20px;color:var(--navy)}
+.stat-l{font-family:var(--sans);font-size:10px;color:var(--slate-l);letter-spacing:.07em;text-transform:uppercase;margin-top:2px}
+.w-note{font-family:var(--sans);font-size:11px;color:var(--slate-l);border:1px solid var(--rule);
+  padding:10px 14px;background:var(--white);border-left:3px solid var(--gold-dim);
+  max-width:460px;line-height:1.6;text-align:left}
+
+/* DOCUMENT */
+.doc-hdr{border-bottom:2px solid var(--rule);padding-bottom:14px;margin-bottom:22px}
+.doc-eye{font-family:var(--sans);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);margin-bottom:5px}
+.doc-title{font-size:21px;color:var(--navy);font-weight:normal;line-height:1.3;margin-bottom:7px}
+.doc-metas{display:flex;flex-wrap:wrap;gap:10px;margin-top:8px}
+.doc-meta{font-family:var(--sans);font-size:11px;color:var(--slate-l)}
+.doc-meta strong{color:var(--slate)}
+.tag-row{display:flex;flex-wrap:wrap;gap:4px;margin-top:9px}
+.tag{font-family:var(--sans);font-size:10px;padding:2px 8px;border-radius:10px;border:1px solid var(--rule);color:var(--slate);background:var(--cream-d);text-transform:capitalize}
+.tag.bco{background:rgba(27,42,74,.06);border-color:rgba(27,42,74,.18);color:var(--navy)}
+.tag.topic{background:rgba(184,151,46,.09);border-color:rgba(184,151,46,.28);color:var(--gold-dim)}
+.doc-body{font-size:14.5px;line-height:1.85;color:var(--text)}
+.doc-body p{margin-bottom:13px}
+.chunk-nav{display:flex;align-items:center;justify-content:space-between;margin-top:26px;
+  padding-top:14px;border-top:1px solid var(--rule);font-family:var(--sans);font-size:12px;color:var(--slate-l)}
+.cnbtn{background:var(--navy);color:var(--cream);border:none;padding:7px 13px;border-radius:2px;
+  cursor:pointer;font-family:var(--sans);font-size:11px;transition:background .1s}
+.cnbtn:hover{background:var(--navy-l)}
+.cnbtn:disabled{background:var(--cream-dd);color:var(--slate-l);cursor:not-allowed}
+.notes-wrap{margin-top:22px;padding-top:14px;border-top:1px solid var(--rule)}
+.notes-lbl{font-family:var(--sans);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--slate-l);margin-bottom:7px;display:block}
+.notes-ta{width:100%;min-height:78px;border:1px solid var(--rule);border-radius:2px;padding:9px 11px;
+  font-family:var(--serif);font-size:13.5px;color:var(--text);background:var(--white);resize:vertical;outline:none;line-height:1.6}
+.notes-ta:focus{border-color:var(--navy)}
+.notes-saved{font-family:var(--sans);font-size:10px;color:var(--green);margin-top:4px;opacity:0;transition:opacity .3s}
+.notes-saved.show{opacity:1}
+
+/* STANDARDS */
+#std-panel{flex:1;display:none;flex-direction:column;overflow:hidden;background:var(--cream)}
+#std-panel.vis{display:flex}
+.std-tabs{display:flex;background:var(--navy);border-bottom:2px solid var(--gold);flex-shrink:0;overflow-x:auto}
+.stab{font-family:var(--sans);font-size:11px;color:#5a7898;padding:10px 15px;cursor:pointer;
+  white-space:nowrap;border:none;border-bottom:2px solid transparent;margin-bottom:-2px;
+  background:none;transition:color .12s,border-color .12s}
+.stab:hover{color:var(--cream)}
+.stab.on{color:var(--gold);border-bottom-color:var(--gold)}
+#std-content{flex:1;overflow-y:auto;padding:28px 36px;max-width:840px;margin:0 auto;width:100%}
+#std-content::-webkit-scrollbar{width:5px}
+#std-content::-webkit-scrollbar-thumb{background:var(--rule);border-radius:2px}
+.std-dtitle{font-size:21px;color:var(--navy);font-weight:normal;margin-bottom:3px}
+.std-dsub{font-family:var(--sans);font-size:12px;color:var(--slate-l);margin-bottom:18px}
+.std-rule{width:44px;height:2px;background:var(--gold);margin:0 0 22px}
+.std-ch{margin-bottom:26px}
+.std-ch-h{font-size:14px;color:var(--navy);margin-bottom:9px;border-left:3px solid var(--gold);padding-left:11px;font-weight:normal}
+.std-art{margin-bottom:11px;padding-left:11px}
+.std-art-n{font-family:var(--sans);font-size:10px;color:var(--gold-dim);margin-bottom:2px;letter-spacing:.05em}
+.std-art-t{font-size:14px;line-height:1.8;color:var(--text)}
+
+/* MODALS */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:500;display:flex;
+  align-items:center;justify-content:center;padding:20px;opacity:0;pointer-events:none;transition:opacity .18s}
+.overlay.open{opacity:1;pointer-events:all}
+.modal{background:var(--cream);max-width:600px;width:100%;max-height:85vh;overflow-y:auto;
+  border-top:3px solid var(--gold);box-shadow:0 20px 60px rgba(0,0,0,.4)}
+.modal-hdr{display:flex;align-items:center;justify-content:space-between;padding:16px 22px 12px;
+  border-bottom:1px solid var(--rule);position:sticky;top:0;background:var(--cream);z-index:1}
+.modal-ttl{font-size:17px;color:var(--navy);font-weight:normal}
+.modal-x{background:none;border:none;font-size:19px;color:var(--slate-l);cursor:pointer;padding:2px 5px}
+.modal-x:hover{color:var(--navy)}
+.modal-body{padding:18px 22px 22px}
+.about-cross{font-size:30px;text-align:center;margin-bottom:10px}
+.about-h{font-size:18px;color:var(--navy);text-align:center;font-weight:normal;margin-bottom:3px}
+.about-rule{width:36px;height:2px;background:var(--gold);margin:9px auto 14px}
+.about-p{font-family:var(--sans);font-size:13px;color:var(--slate);line-height:1.7;margin-bottom:10px}
+.disclaimer{border:1px solid var(--rule);border-left:3px solid var(--gold-dim);padding:13px 15px;background:var(--white);margin:14px 0}
+.disc-lbl{font-family:var(--sans);font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold-dim);margin-bottom:5px}
+.disclaimer p{font-family:var(--sans);font-size:12px;color:var(--slate);line-height:1.65}
+.src-h{font-family:var(--sans);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--slate-l);margin:14px 0 7px}
+.src-ul{font-family:var(--sans);font-size:12px;color:var(--slate);line-height:1.8;padding-left:18px}
+.docket-item{display:flex;align-items:center;gap:9px;padding:9px 0;border-bottom:1px solid var(--rule-l)}
+.docket-item:last-child{border-bottom:none}
+.dkt-info{flex:1;min-width:0}
+.dkt-yr{font-family:var(--sans);font-size:10px;color:var(--gold-dim);margin-bottom:2px}
+.dkt-t{font-size:13px;color:var(--navy);font-family:var(--sans);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.dkt-open{background:var(--navy);color:var(--cream);border:none;padding:4px 9px;
+  font-family:var(--sans);font-size:10px;border-radius:2px;cursor:pointer;flex-shrink:0}
+.dkt-rm{background:none;border:none;color:var(--slate-ll);cursor:pointer;font-size:15px;flex-shrink:0}
+.dkt-rm:hover{color:var(--red)}
+.empty-dkt{font-family:var(--sans);font-size:13px;color:var(--slate-l);font-style:italic;text-align:center;padding:18px}
+
+/* STATUS BAR */
+#status-bar{background:var(--navy-d);padding:4px 18px;display:flex;align-items:center;
+  gap:10px;flex-shrink:0;border-top:1px solid rgba(255,255,255,.04)}
+.sdot{width:5px;height:5px;border-radius:50%;background:#2d7a2d;flex-shrink:0}
+.sdot.loading{background:var(--gold);animation:pulse 1s infinite}
+.sdot.warn{background:var(--gold-dim)}
+@keyframes pulse{0%,100%{opacity:.35}50%{opacity:1}}
+#stxt{font-family:var(--sans);font-size:10px;color:#3a5268}
+.ssep{color:#1e2e42;font-size:10px}
+#bk-status{font-family:var(--sans);font-size:10px;color:#3a5268}
+
+/* LOADING */
+#loading{position:fixed;inset:0;background:var(--navy-d);z-index:999;display:flex;
+  flex-direction:column;align-items:center;justify-content:center;gap:14px;transition:opacity .5s}
+#loading.done{opacity:0;pointer-events:none}
+.ld-cross{font-size:38px;animation:fi 1s ease}
+.ld-title{color:var(--cream);font-size:19px;font-weight:normal;font-family:var(--serif)}
+.ld-bar-w{width:240px;height:3px;background:rgba(255,255,255,.08);border-radius:2px;overflow:hidden}
+.ld-bar{height:100%;background:var(--gold);width:0%;transition:width .3s ease;border-radius:2px}
+.ld-sub{font-family:var(--sans);font-size:12px;color:#3a5268}
+@keyframes fi{from{opacity:0;transform:scale(.85)}to{opacity:1;transform:scale(1)}}
+
+/* RESPONSIVE */
+@media(max-width:768px){
+  #sidebar{position:fixed;left:0;top:0;bottom:0;z-index:200;width:275px;transition:transform .22s}
+  #sidebar.collapsed{transform:translateX(-100%);width:275px}
+  #doc-view,#std-content{padding:18px 14px}
+  .hdr-sub{display:none}
+}
+@media(max-width:480px){
+  .hdr-title{font-size:14px}
+  .hbtn span{display:none}
+}
+</style>
+</head>
+<body>
+
+<div id="loading">
+  <div class="ld-cross">✠</div>
+  <div class="ld-title">Elder's GA Guide</div>
+  <div class="ld-bar-w"><div class="ld-bar" id="ld-bar"></div></div>
+  <div class="ld-sub" id="ld-sub">Loading corpus…</div>
+</div>
+
+<header id="app-header">
+  <div class="hdr">
+    <div class="hdr-brand">
+      <div class="hdr-eye">Ruling &amp; Teaching Elders Helper to the General Assembly</div>
+      <div class="hdr-title">Elder's GA Guide</div>
+      <div class="hdr-sub">General Assembly Reference · 1973 to Present</div>
+    </div>
+    <div class="hdr-btns">
+      <button class="hbtn" onclick="openDocket()">📋 <span>Docket</span></button>
+      <button class="hbtn" id="std-btn" onclick="toggleStd()">📖 <span>Standards</span></button>
+      <button class="hbtn" onclick="openAbout()">ℹ <span>About</span></button>
+    </div>
+  </div>
+</header>
+
+<div id="app-body">
+  <aside id="sidebar">
+    <div class="sb-sec">
+      <span class="sb-lbl">Browse</span>
+      <div class="nav-tabs">
+        <button class="ntab on" onclick="setView('all',this)"><span class="ico">📜</span>All Documents<span class="cnt" id="c-all">—</span></button>
+        <button class="ntab" onclick="setView('overture',this)"><span class="ico">⚖️</span>Overtures<span class="cnt" id="c-ov">—</span></button>
+        <button class="ntab" onclick="setView('ga_minutes',this)"><span class="ico">📋</span>GA Minutes<span class="cnt" id="c-ga">—</span></button>
+        <button class="ntab" onclick="setView('study_committee',this)"><span class="ico">📑</span>Study Reports<span class="cnt" id="c-st">—</span></button>
+        <button class="ntab" onclick="setView('bookmarks',this)"><span class="ico">🔖</span>Bookmarks<span class="cnt" id="c-bk">0</span></button>
+      </div>
+    </div>
+    <div class="sb-sec">
+      <span class="sb-lbl">Filter &amp; Search</span>
+      <div class="filter-area">
+        <div class="filter-row">
+          <select class="fsel" id="f-year" onchange="applyFilters()"><option value="">All Years</option></select>
+          <select class="fsel" id="f-topic" onchange="applyFilters()"><option value="">All Topics</option></select>
+        </div>
+        <div class="srch-wrap">
+          <input class="srch" id="srch" type="search" placeholder="Search all documents…" oninput="onSearch(this)">
+          <button class="srch-x" id="srch-x" onclick="clearSearch()">✕</button>
+        </div>
+      </div>
+    </div>
+    <div id="result-list"></div>
+  </aside>
+
+  <main id="main-panel">
+    <div id="panel-toolbar">
+      <button class="tbtn" id="sb-toggle" onclick="toggleSidebar()">☰</button>
+      <div class="tb-title" id="tb-title">General Assembly Reference</div>
+      <button class="tbtn" id="bk-btn" onclick="toggleBk()" style="display:none">🔖 Bookmark</button>
+      <button class="tbtn" id="dkt-btn" onclick="addToDocket()" style="display:none">+ Docket</button>
+    </div>
+    <div id="doc-view">
+      <div id="welcome"></div>
+      <div id="doc-content" style="display:none"></div>
+    </div>
+  </main>
+
+  <div id="std-panel">
+    <div class="std-tabs" id="std-tabs"></div>
+    <div id="std-content"></div>
+  </div>
+</div>
+
+<div id="status-bar">
+  <div class="sdot loading" id="sdot"></div>
+  <span id="stxt">Loading…</span>
+  <span class="ssep">·</span>
+  <span id="bk-status">0 bookmarks</span>
+</div>
+
+<!-- About modal -->
+<div class="overlay" id="m-about">
+  <div class="modal">
+    <div class="modal-hdr"><div class="modal-ttl">About</div><button class="modal-x" onclick="cm('m-about')">✕</button></div>
+    <div class="modal-body">
+      <div class="about-cross">✠</div>
+      <div class="about-h">Ruling and Teaching Elders<br>Helper to the General Assembly</div>
+      <div class="about-rule"></div>
+      <p class="about-p">A reference tool for commissioners preparing for the General Assembly. Search and browse the full record of Assembly proceedings from 1973 to the present, alongside the Westminster Standards and constitutional documents.</p>
+      <div class="disclaimer">
+        <div class="disc-lbl">Disclaimer</div>
+        <p>This application is an independent reference tool created to assist ruling and teaching elders in preparing for the General Assembly. It is not sanctioned, endorsed, or affiliated with the General Assembly, the Administrative Committee, or any official body of the Assembly. All source documents are publicly available. Users should verify any information against official sources before relying on it for Assembly business.</p>
+      </div>
+      <div class="src-h">Sources</div>
+      <ul class="src-ul">
+        <li>GA Minutes 1973–present — pcahistory.org</li>
+        <li>Overtures 2019–2026 — pcaga.org / pcaac.org</li>
+        <li>Study Committee Reports — pcahistory.org</li>
+        <li>Westminster Standards — Public domain (1788 American revision of the WCF)</li>
+        <li>Book of Church Order, RAO, Preliminary Principles — pcaac.org</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- Docket modal -->
+<div class="overlay" id="m-docket">
+  <div class="modal">
+    <div class="modal-hdr"><div class="modal-ttl">📋 My Docket</div><button class="modal-x" onclick="cm('m-docket')">✕</button></div>
+    <div class="modal-body" id="docket-body"></div>
+  </div>
+</div>
+
+<script>
+// ── STATE
+let corpus=[], idx={}, filtered=[], curChunk=null, curView='all';
+let bookmarks=JSON.parse(localStorage.getItem('ga_bk')||'[]');
+let docket=JSON.parse(localStorage.getItem('ga_dkt')||'[]');
+let notes=JSON.parse(localStorage.getItem('ga_notes')||'{}');
+let sbOpen=true, stdOpen=false, srchTimer=null;
+
+// ── BOOT
+async function boot(){
+  ld('Loading corpus…',10);
+  try{
+    const r=await fetch('corpus_final.json');
+    if(!r.ok) throw new Error('not found');
+    ld('Parsing…',45);
+    corpus=await r.json();
+    ld('Indexing…',75);
+    try{const ri=await fetch('corpus_index.json');if(ri.ok)idx=await ri.json();}catch(_){}
+    ld('Ready',100);
+    await sleep(380);
+    done();
+  }catch(e){
+    ld('Ready',100);
+    await sleep(280);
+    done(true);
+  }
+}
+function done(noCorpus=false){
+  document.getElementById('loading').classList.add('done');
+  setTimeout(()=>document.getElementById('loading').style.display='none',550);
+  if(!noCorpus){buildFilters();filtered=corpus;renderList(filtered);updateCounts();}
+  renderWelcome(noCorpus);
+  updateStatus();
+  updateBkStatus();
+}
+function ld(msg,pct){document.getElementById('ld-sub').textContent=msg;document.getElementById('ld-bar').style.width=pct+'%';}
+function sleep(ms){return new Promise(r=>setTimeout(r,ms));}
+
+// ── FILTERS
+function buildFilters(){
+  const years=[...new Set(corpus.map(c=>c.year).filter(Boolean))].sort();
+  const sel=document.getElementById('f-year');
+  years.forEach(y=>{const o=document.createElement('option');o.value=y;o.textContent=y;sel.appendChild(o);});
+  const topics=[...new Set(corpus.flatMap(c=>c.topics||[]))].sort();
+  const tsel=document.getElementById('f-topic');
+  topics.forEach(t=>{const o=document.createElement('option');o.value=t;o.textContent=t[0].toUpperCase()+t.slice(1);tsel.appendChild(o);});
+}
+function applyFilters(){
+  const year=document.getElementById('f-year').value;
+  const topic=document.getElementById('f-topic').value;
+  const q=document.getElementById('srch').value.trim().toLowerCase();
+  let src=corpus;
+  if(curView==='bookmarks') src=corpus.filter(c=>bookmarks.includes(c.id));
+  else if(curView!=='all') src=corpus.filter(c=>c.doc_type===curView);
+  filtered=src.filter(c=>{
+    if(year&&String(c.year)!==year)return false;
+    if(topic&&!(c.topics||[]).includes(topic))return false;
+    if(q){const h=(c.text||'').toLowerCase()+' '+(c.title||'').toLowerCase();return h.includes(q);}
+    return true;
+  });
+  renderList(filtered);
+}
+function onSearch(el){
+  document.getElementById('srch-x').classList.toggle('vis',el.value.length>0);
+  clearTimeout(srchTimer);srchTimer=setTimeout(applyFilters,300);
+}
+function clearSearch(){document.getElementById('srch').value='';document.getElementById('srch-x').classList.remove('vis');applyFilters();}
+function setView(view,el){
+  curView=view;
+  document.querySelectorAll('.ntab').forEach(t=>t.classList.remove('on'));
+  el.classList.add('on');
+  applyFilters();
+}
+
+// ── LIST
+function renderList(items){
+  const list=document.getElementById('result-list');
+  if(!items.length){list.innerHTML='<div class="no-res">No documents match.<br>Adjust filters or search terms.</div>';return;}
+  const shown=items.slice(0,200);
+  list.innerHTML=shown.map(c=>{
+    const active=curChunk&&curChunk.id===c.id;
+    const corpusIdx=corpus.indexOf(c);
+    const t=(c.topics||[]).slice(0,3);
+    const bk=bookmarks.includes(c.id);
+    return`<div class="ritem${active?' on':''}" onclick="openChunk(${corpusIdx})" id="ri-${c.id}">
+      <div class="ri-yr">${c.year||''} · ${typeLabel(c.doc_type)}</div>
+      <div class="ri-t">${esc(chunkTitle(c))}</div>
+      ${chunkMeta(c)?`<div class="ri-m">${esc(chunkMeta(c))}</div>`:''}
+      ${t.length||bk?`<div class="ri-tags">${t.map(x=>`<span class="ri-tag">${x}</span>`).join('')}${bk?'<span class="ri-tag" style="background:rgba(184,151,46,.18);color:var(--gold)">🔖</span>':''}</div>`:''}
+    </div>`;
+  }).join('');
+  if(items.length>200) list.innerHTML+=`<div class="no-res">${items.length-200} more — refine search to narrow results.</div>`;
+}
+function chunkTitle(c){
+  if(c.doc_type==='overture') return c.title||(c.overture_number?`Overture ${c.overture_number} (${c.year})`:`Overture (${c.year})`);
+  if(c.doc_type==='ga_minutes'){
+    const o=ord(c.ga_number);
+    const pt=c.total_chunks>1?` — Part ${(c.chunk_index||0)+1}/${c.total_chunks}`:'';
+    return`${o} General Assembly (${c.year})${pt}`;
+  }
+  if(c.doc_type==='study_committee') return c.title||'Study Report';
+  return c.title||'Document';
+}
+function chunkMeta(c){
+  const p=[];
+  if(c.location) p.push(c.location);
+  if(c.moderator) p.push('Mod: '+c.moderator);
+  if((c.bco_refs||[]).length) p.push('BCO: '+c.bco_refs.slice(0,3).join(', '));
+  return p.join(' · ');
+}
+function typeLabel(t){return{ga_minutes:'Minutes',overture:'Overture',study_committee:'Study Report'}[t]||t;}
+function updateCounts(){
+  document.getElementById('c-all').textContent=corpus.length.toLocaleString();
+  document.getElementById('c-ov').textContent=corpus.filter(c=>c.doc_type==='overture').length.toLocaleString();
+  document.getElementById('c-ga').textContent=corpus.filter(c=>c.doc_type==='ga_minutes').length.toLocaleString();
+  document.getElementById('c-st').textContent=corpus.filter(c=>c.doc_type==='study_committee').length.toLocaleString();
+  updateBkStatus();
+}
+
+// ── DOC VIEW
+function openChunk(i){
+  curChunk=corpus[i];
+  document.querySelectorAll('.ritem').forEach(e=>e.classList.remove('on'));
+  const ri=document.getElementById('ri-'+curChunk.id);
+  if(ri){ri.classList.add('on');ri.scrollIntoView({block:'nearest'});}
+  document.getElementById('welcome').style.display='none';
+  document.getElementById('doc-content').style.display='block';
+  document.getElementById('tb-title').textContent=chunkTitle(curChunk);
+  document.getElementById('bk-btn').style.display='';
+  document.getElementById('dkt-btn').style.display='';
+  updateBkBtn();
+  const c=curChunk;
+  const sibs=corpus.filter(s=>s.doc_type===c.doc_type&&s.year===c.year&&s.ga_number===c.ga_number&&s.title===c.title);
+  const si=sibs.indexOf(c);
+  const hasPrev=si>0, hasNext=si<sibs.length-1;
+  const bcoT=(c.bco_chapters||[]).map(ch=>`<span class="tag bco">${esc(ch)}</span>`).join('');
+  const topT=(c.topics||[]).map(t=>`<span class="tag topic">${t}</span>`).join('');
+  const savedNote=notes[c.id]||'';
+  document.getElementById('doc-content').innerHTML=`
+    <div class="doc-hdr">
+      <div class="doc-eye">${typeLabel(c.doc_type)} · ${c.year||''} ${c.era?'· '+c.era:''}</div>
+      <div class="doc-title">${esc(chunkTitle(c))}</div>
+      <div class="doc-metas">
+        ${c.location?`<div class="doc-meta"><strong>Location:</strong> ${esc(c.location)}</div>`:''}
+        ${c.moderator?`<div class="doc-meta"><strong>Moderator:</strong> ${esc(c.moderator)}</div>`:''}
+        ${c.source?`<div class="doc-meta"><strong>Source:</strong> ${esc(c.source)}</div>`:''}
+      </div>
+      ${bcoT||topT?`<div class="tag-row">${bcoT}${topT}</div>`:''}
+    </div>
+    <div class="doc-body">${fmtText(c.text||'')}</div>
+    ${sibs.length>1?`<div class="chunk-nav">
+      <button class="cnbtn" onclick="openChunk(${corpus.indexOf(sibs[si-1])})" ${!hasPrev?'disabled':''}>← Previous</button>
+      <span>Section ${si+1} of ${sibs.length}</span>
+      <button class="cnbtn" onclick="openChunk(${corpus.indexOf(sibs[si+1])})" ${!hasNext?'disabled':''}>Next →</button>
+    </div>`:''}
+    <div class="notes-wrap">
+      <span class="notes-lbl">Personal Notes</span>
+      <textarea class="notes-ta" id="notes-field" placeholder="Add your notes on this document…" oninput="saveNote()">${esc(savedNote)}</textarea>
+      <div class="notes-saved" id="notes-saved">Saved</div>
+    </div>`;
+  if(stdOpen) toggleStd();
+  if(window.innerWidth<=768) document.getElementById('sidebar').classList.add('collapsed');
+  updateStatus();
+}
+function fmtText(t){
+  if(!t) return'';
+  return esc(t).split(/\n\n+/).map(p=>`<p>${p.replace(/\n/g,'<br>')}</p>`).join('');
+}
+let ntimer;
+function saveNote(){
+  const v=document.getElementById('notes-field').value;
+  notes[curChunk.id]=v;
+  clearTimeout(ntimer);
+  ntimer=setTimeout(()=>{
+    localStorage.setItem('ga_notes',JSON.stringify(notes));
+    const el=document.getElementById('notes-saved');
+    if(el){el.classList.add('show');setTimeout(()=>el.classList.remove('show'),1400);}
+  },600);
+}
+
+// ── BOOKMARKS
+function toggleBk(){
+  if(!curChunk)return;
+  const id=curChunk.id;
+  if(bookmarks.includes(id)) bookmarks=bookmarks.filter(b=>b!==id);
+  else bookmarks.push(id);
+  localStorage.setItem('ga_bk',JSON.stringify(bookmarks));
+  updateBkBtn();updateBkStatus();
+  if(curView==='bookmarks') applyFilters();
+}
+function updateBkBtn(){
+  if(!curChunk)return;
+  const isB=bookmarks.includes(curChunk.id);
+  const btn=document.getElementById('bk-btn');
+  btn.textContent=isB?'🔖 Bookmarked':'🔖 Bookmark';
+  btn.classList.toggle('bkd',isB);
+}
+function updateBkStatus(){
+  const n=bookmarks.length;
+  document.getElementById('bk-status').textContent=`${n} bookmark${n!==1?'s':''}`;
+  document.getElementById('c-bk').textContent=n;
+}
+
+// ── DOCKET
+function addToDocket(){
+  if(!curChunk)return;
+  const id=curChunk.id;
+  if(!docket.find(d=>d.id===id)){
+    docket.push({id,title:chunkTitle(curChunk),year:curChunk.year});
+    localStorage.setItem('ga_dkt',JSON.stringify(docket));
+  }
+  document.getElementById('dkt-btn').textContent='✓ In Docket';
+}
+function openDocket(){
+  const body=document.getElementById('docket-body');
+  if(!docket.length){body.innerHTML='<div class="empty-dkt">Your docket is empty.<br>Open a document and click "+ Docket".</div>';}
+  else{body.innerHTML=docket.map((d,i)=>`
+    <div class="docket-item">
+      <div class="dkt-info"><div class="dkt-yr">${d.year||''}</div><div class="dkt-t">${esc(d.title)}</div></div>
+      <button class="dkt-open" onclick="openFromDocket('${d.id}');cm('m-docket')">Open</button>
+      <button class="dkt-rm" onclick="rmDocket(${i})">✕</button>
+    </div>`).join('');}
+  om('m-docket');
+}
+function rmDocket(i){docket.splice(i,1);localStorage.setItem('ga_dkt',JSON.stringify(docket));openDocket();}
+function openFromDocket(id){const i=corpus.findIndex(c=>c.id===id);if(i>=0)openChunk(i);}
+
+// ── SIDEBAR
+function toggleSidebar(){sbOpen=!sbOpen;document.getElementById('sidebar').classList.toggle('collapsed',!sbOpen);}
+
+// ── STANDARDS
+const STDS={
+  wcf:{label:'Westminster Confession of Faith (1788)',sub:'American Presbyterian Revision'},
+  wlc:{label:'Westminster Larger Catechism',sub:'1647'},
+  wsc:{label:'Westminster Shorter Catechism',sub:'1647'},
+  bco:{label:'Book of Church Order',sub:'Current edition — pcaac.org'},
+};
+function toggleStd(){
+  stdOpen=!stdOpen;
+  document.getElementById('std-panel').classList.toggle('vis',stdOpen);
+  document.getElementById('main-panel').style.display=stdOpen?'none':'';
+  document.getElementById('std-btn').classList.toggle('on',stdOpen);
+  if(stdOpen) renderStd('wcf');
+}
+function renderStd(key){
+  const tabs=document.getElementById('std-tabs');
+  tabs.innerHTML=Object.entries(STDS).map(([k,v])=>`<button class="stab${k===key?' on':''}" onclick="renderStd('${k}')">${v.label.split(' ').slice(0,3).join(' ')}</button>`).join('');
+  const content=document.getElementById('std-content');
+  const s=STDS[key];
+  content.innerHTML=`<div class="std-dtitle">${esc(s.label)}</div><div class="std-dsub">${esc(s.sub)}</div><div class="std-rule"></div>${getStdContent(key)}`;
+  content.scrollTop=0;
+}
+function getStdContent(key){
+  if(key==='wcf') return getWCF();
+  if(key==='wlc') return getWLC();
+  if(key==='wsc') return getWSC();
+  if(key==='bco') return getBCO();
+  return'';
+}
+
+// ── MODALS
+function om(id){document.getElementById(id).classList.add('open');}
+function cm(id){document.getElementById(id).classList.remove('open');}
+function openAbout(){om('m-about');}
+document.querySelectorAll('.overlay').forEach(el=>el.addEventListener('click',e=>{if(e.target===el)el.classList.remove('open');}));
+
+// ── WELCOME
+function renderWelcome(noCorpus){
+  const el=document.getElementById('welcome');
+  if(noCorpus){
+    el.innerHTML=`<div class="w-cross">✠</div><div class="w-h">Corpus Not Found</div><div class="w-rule"></div>
+    <div class="w-p">Place <strong>corpus_final.json</strong> and <strong>corpus_index.json</strong> in the same folder as this file, then reload.</div>`;
+    updateStatus('No corpus loaded',true);return;
+  }
+  const years=idx.years_available||[];
+  const minY=years[0]||1973,maxY=years[years.length-1]||2025;
+  el.innerHTML=`<div class="w-cross">✠</div><div class="w-h">Elder's GA Guide</div><div class="w-rule"></div>
+  <div class="w-p">Full record of General Assembly proceedings ${minY}–${maxY}, Westminster Standards (1788 WCF), and constitutional documents. Select a document in the left panel to begin.</div>
+  <div class="w-stats">
+    <div class="stat"><div class="stat-n">${corpus.length.toLocaleString()}</div><div class="stat-l">Documents</div></div>
+    <div class="stat"><div class="stat-n">${years.length}</div><div class="stat-l">Assemblies</div></div>
+    <div class="stat"><div class="stat-n">${corpus.filter(c=>c.doc_type==='overture').length}</div><div class="stat-l">Overtures</div></div>
+  </div>
+  <div class="w-note"><strong>Tip:</strong> Search for BCO sections (e.g. "BCO 20-4"), overture topics, or commissioner names. Filter by year or topic using the dropdowns. Bookmark documents for quick floor reference.</div>`;
+}
+
+// ── STATUS
+function updateStatus(msg,warn){
+  const dot=document.getElementById('sdot'),txt=document.getElementById('stxt');
+  dot.classList.remove('loading','warn');
+  if(warn){dot.classList.add('warn');}
+  if(msg){txt.textContent=msg;return;}
+  if(!corpus.length){dot.classList.add('warn');txt.textContent='No corpus loaded';return;}
+  const years=idx.years_available||[];
+  txt.textContent=`${corpus.length.toLocaleString()} documents · ${years[0]||1973}–${years[years.length-1]||2025}`;
+}
+
+// ── UTILITIES
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function ord(n){if(!n)return'';const s=['th','st','nd','rd'],v=n%100;return n+(s[(v-20)%10]||s[v]||s[0]);}
+
+// ── WESTMINSTER CONFESSION OF FAITH (1788) — Selected chapters
+function getWCF(){return`
+<div class="std-ch"><div class="std-ch-h">Chapter I — Of the Holy Scripture</div>
+<div class="std-art"><div class="std-art-n">I.</div><div class="std-art-t">Although the light of nature, and the works of creation and providence, do so far manifest the goodness, wisdom, and power of God, as to leave men inexcusable; yet are they not sufficient to give that knowledge of God, and of his will, which is necessary unto salvation; therefore it pleased the Lord, at sundry times, and in divers manners, to reveal himself, and to declare that his will unto his Church; and afterwards for the better preserving and propagating of the truth, and for the more sure establishment and comfort of the Church against the corruption of the flesh, and the malice of Satan and of the world, to commit the same wholly unto writing; which maketh the holy Scripture to be most necessary; those former ways of God's revealing his will unto his people being now ceased.</div></div>
+<div class="std-art"><div class="std-art-n">II.</div><div class="std-art-t">Under the name of holy Scripture, or the Word of God written, are now contained all the Books of the Old and New Testaments, which are these — Of the Old Testament: Genesis, Exodus, Leviticus, Numbers, Deuteronomy, Joshua, Judges, Ruth, I Samuel, II Samuel, I Kings, II Kings, I Chronicles, II Chronicles, Ezra, Nehemiah, Esther, Job, Psalms, Proverbs, Ecclesiastes, The Song of Songs, Isaiah, Jeremiah, Lamentations, Ezekiel, Daniel, Hosea, Joel, Amos, Obadiah, Jonah, Micah, Nahum, Habakkuk, Zephaniah, Haggai, Zechariah, Malachi. Of the New Testament: Matthew, Mark, Luke, John, The Acts of the Apostles, Romans, I Corinthians, II Corinthians, Galatians, Ephesians, Philippians, Colossians, I Thessalonians, II Thessalonians, I Timothy, II Timothy, Titus, Philemon, Hebrews, James, I Peter, II Peter, I John, II John, III John, Jude, Revelation. All which are given by inspiration of God, to be the rule of faith and life.</div></div>
+<div class="std-art"><div class="std-art-n">IV.</div><div class="std-art-t">The authority of the holy Scripture, for which it ought to be believed and obeyed, dependeth not upon the testimony of any man or church, but wholly upon God (who is truth itself), the Author thereof; and therefore it is to be received, because it is the Word of God.</div></div>
+<div class="std-art"><div class="std-art-n">VI.</div><div class="std-art-t">The whole counsel of God, concerning all things necessary for his own glory, man's salvation, faith, and life, is either expressly set down in Scripture, or by good and necessary consequence may be deduced from Scripture: unto which nothing at any time is to be added, whether by new revelations of the Spirit, or traditions of men.</div></div>
+<div class="std-art"><div class="std-art-n">IX.</div><div class="std-art-t">The infallible rule of interpretation of Scripture is the Scripture itself; and therefore, when there is a question about the true and full sense of any Scripture (which is not manifold, but one), it must be searched and known by other places that speak more clearly.</div></div></div>
+
+<div class="std-ch"><div class="std-ch-h">Chapter II — Of God, and of the Holy Trinity</div>
+<div class="std-art"><div class="std-art-n">I.</div><div class="std-art-t">There is but one only living and true God, who is infinite in being and perfection, a most pure spirit, invisible, without body, parts, or passions, immutable, immense, eternal, incomprehensible, almighty, most wise, most holy, most free, most absolute, working all things according to the counsel of his own immutable and most righteous will, for his own glory; most loving, gracious, merciful, long-suffering, abundant in goodness and truth, forgiving iniquity, transgression, and sin; the rewarder of them that diligently seek him; and withal most just and terrible in his judgments; hating all sin, and who will by no means clear the guilty.</div></div>
+<div class="std-art"><div class="std-art-n">III.</div><div class="std-art-t">In the unity of the Godhead there be three Persons of one substance, power, and eternity: God the Father, God the Son, and God the Holy Ghost. The Father is of none, neither begotten nor proceeding; the Son is eternally begotten of the Father; the Holy Ghost eternally proceeding from the Father and the Son.</div></div></div>
+
+<div class="std-ch"><div class="std-ch-h">Chapter III — Of God's Eternal Decree</div>
+<div class="std-art"><div class="std-art-n">I.</div><div class="std-art-t">God from all eternity did by the most wise and holy counsel of his own will, freely and unchangeably ordain whatsoever comes to pass; yet so as thereby neither is God the author of sin; nor is violence offered to the will of the creatures, nor is the liberty or contingency of second causes taken away, but rather established.</div></div></div>
+
+<div class="std-ch"><div class="std-ch-h">Chapter XXI — Of Religious Worship and the Sabbath Day</div>
+<div class="std-art"><div class="std-art-n">I.</div><div class="std-art-t">The light of nature showeth that there is a God, who hath lordship and sovereignty over all; is good, and doeth good unto all; and is therefore to be feared, loved, praised, called upon, trusted in, and served with all the heart, and with all the soul, and with all the might. But the acceptable way of worshipping the true God is instituted by himself, and so limited by his own revealed will, that he may not be worshipped according to the imaginations and devices of men, or the suggestions of Satan, under any visible representations, or any other way not prescribed in the holy Scripture.</div></div>
+<div class="std-art"><div class="std-art-n">VII.</div><div class="std-art-t">As it is the law of nature, that, in general, a due proportion of time be set apart for the worship of God; so, in his Word, by a positive, moral, and perpetual commandment, binding all men in all ages, he hath particularly appointed one day in seven for a Sabbath, to be kept holy unto him: which, from the beginning of the world to the resurrection of Christ, was the last day of the week; and, from the resurrection of Christ, was changed into the first day of the week, which in Scripture is called the Lord's Day, and is to be continued to the end of the world as the Christian Sabbath.</div></div></div>
+
+<div class="std-ch"><div class="std-ch-h">Chapter XXIII — Of the Civil Magistrate (1788 American Revision)</div>
+<div class="std-art"><div class="std-art-n">I.</div><div class="std-art-t">God, the Supreme Lord and King of all the world, hath ordained civil magistrates to be under him over the people, for his own glory and the public good; and to this end, hath armed them with the power of the sword, for the defense and encouragement of them that are good, and for the punishment of evil-doers.</div></div>
+<div class="std-art"><div class="std-art-n">III.</div><div class="std-art-t">Civil magistrates may not assume to themselves the administration of the Word and Sacraments; or the power of the keys of the kingdom of heaven; or, in the least, interfere in matters of faith. Yet as nursing fathers, it is the duty of civil magistrates to protect the Church of our common Lord, without giving the preference to any denomination of Christians above the rest, in such a manner that all ecclesiastical persons whatever shall enjoy the full, free, and unquestioned liberty of discharging every part of their sacred functions, without violence or danger. And, as Jesus Christ hath appointed a regular government and discipline in his Church, no law of any commonwealth should interfere with, let, or hinder, the due exercise thereof, among the voluntary members of any denomination of Christians, according to their own profession and belief.</div></div></div>
+
+<div class="std-ch"><div class="std-ch-h">Chapter XXV — Of the Church</div>
+<div class="std-art"><div class="std-art-n">I.</div><div class="std-art-t">The catholic or universal Church, which is invisible, consists of the whole number of the elect, that have been, are, or shall be gathered into one, under Christ the head thereof; and is the spouse, the body, the fullness of him that filleth all in all.</div></div>
+<div class="std-art"><div class="std-art-n">II.</div><div class="std-art-t">The visible Church, which is also catholic or universal under the gospel (not confined to one nation as before under the law), consists of all those throughout the world that profess the true religion, and of their children; and is the kingdom of the Lord Jesus Christ, the house and family of God, out of which there is no ordinary possibility of salvation.</div></div></div>
+
+<div class="std-ch"><div class="std-ch-h">Chapter XXXI — Of Synods and Councils (1788 American Revision)</div>
+<div class="std-art"><div class="std-art-n">I.</div><div class="std-art-t">For the better government and further edification of the Church, there ought to be such assemblies as are commonly called synods or councils.</div></div>
+<div class="std-art"><div class="std-art-n">II.</div><div class="std-art-t">As magistrates may lawfully call a synod of ministers and other fit persons, to consult and advise with about matters of religion; so, if magistrates be open enemies to the Church, the ministers of Christ, of themselves, by virtue of their office, or they, with other fit persons upon delegation from their churches, may meet together in such assemblies.</div></div>
+<div class="std-art"><div class="std-art-n">III.</div><div class="std-art-t">It belongeth to synods and councils, ministerially to determine controversies of faith, and cases of conscience; to set down rules and directions for the better ordering of the public worship of God, and government of his Church; to receive complaints in cases of mal-administration, and authoritatively to determine the same: which decrees and determinations, if consonant to the Word of God, are to be received with reverence and submission, not only for their agreement with the Word, but also for the power whereby they are made, as being an ordinance of God, appointed thereunto in his Word.</div></div>
+<div class="std-art"><div class="std-art-n">IV.</div><div class="std-art-t">All synods or councils since the apostles' times, whether general or particular, may err, and many have erred; therefore they are not to be made the rule of faith or practice, but to be used as a help in both.</div></div></div>
+
+<div class="std-ch"><div class="std-ch-h">Note on the 1788 American Revision</div>
+<div class="std-art"><div class="std-art-n"></div><div class="std-art-t">The American Presbyterian Church revised the Westminster Confession in 1788, most significantly in Chapters XXIII (Civil Magistrate) and XXXI (Synods and Councils). The revisions removed provisions granting civil magistrates authority over church assemblies and religious controversy — reflecting the American context of church-state separation under the First Amendment. The Presbyterian Church in America holds to this 1788 revision as its confessional standard. The catechisms (WLC and WSC) were not substantively revised, though minor changes were made to WSC Q&amp;A 109.</div></div></div>
+`;}
+
+// ── WESTMINSTER LARGER CATECHISM (selected)
+function getWLC(){return`
+<div class="std-ch"><div class="std-ch-h">Of God and Holy Scripture</div>
+<div class="std-art"><div class="std-art-n">Q. 1.</div><div class="std-art-t">What is the chief and highest end of man? <strong>A.</strong> Man's chief and highest end is to glorify God, and fully to enjoy him forever.</div></div>
+<div class="std-art"><div class="std-art-n">Q. 2.</div><div class="std-art-t">How doth it appear that there is a God? <strong>A.</strong> The very light of nature in man, and the works of God, declare plainly that there is a God; but his Word and Spirit only do sufficiently and effectually reveal him unto men for their salvation.</div></div>
+<div class="std-art"><div class="std-art-n">Q. 3.</div><div class="std-art-t">What is the Word of God? <strong>A.</strong> The holy Scriptures of the Old and New Testaments are the Word of God, the only rule of faith and obedience.</div></div>
+<div class="std-art"><div class="std-art-n">Q. 4.</div><div class="std-art-t">How doth it appear that the Scriptures are the Word of God? <strong>A.</strong> The Scriptures manifest themselves to be the Word of God, by their majesty and purity; by the consent of all the parts, and the scope of the whole, which is to give all glory to God; by their light and power to convince and convert sinners, to comfort and build up believers unto salvation: but the Spirit of God bearing witness by and with the Scriptures in the heart of man, is alone able fully to persuade it that they are the very Word of God.</div></div></div>
+
+<div class="std-ch"><div class="std-ch-h">Of Christ the Mediator</div>
+<div class="std-art"><div class="std-art-n">Q. 36.</div><div class="std-art-t">Who is the Mediator of the covenant of grace? <strong>A.</strong> The only Mediator of the covenant of grace is the Lord Jesus Christ, who, being the eternal Son of God, of one substance and equal with the Father, in the fullness of time became man, and so was and continues to be God and man, in two entire distinct natures, and one person, forever.</div></div>
+<div class="std-art"><div class="std-art-n">Q. 38.</div><div class="std-art-t">Why was it requisite that the Mediator should be God? <strong>A.</strong> It was requisite that the Mediator should be God, that he might sustain and keep the human nature from sinking under the infinite wrath of God, and the power of death; give worth and efficacy to his sufferings, obedience, and intercession; and to satisfy God's justice, procure his favor, purchase a peculiar people, give his Spirit to them, conquer all their enemies, and bring them to everlasting salvation.</div></div></div>
+
+<div class="std-ch"><div class="std-ch-h">Of the Church and Sacraments</div>
+<div class="std-art"><div class="std-art-n">Q. 62.</div><div class="std-art-t">What is the visible Church? <strong>A.</strong> The visible Church is a society made up of all such as in all ages and places of the world do profess the true religion, and of their children.</div></div>
+<div class="std-art"><div class="std-art-n">Q. 63.</div><div class="std-art-t">What are the special privileges of the visible Church? <strong>A.</strong> The visible Church hath the privilege of being under God's special care and government; of being protected and preserved in all ages, notwithstanding the opposition of all enemies; and of enjoying the communion of saints, the ordinary means of salvation, and offers of grace by Christ to all the members of it in the ministry of the gospel, testifying, that whosoever believes in him shall be saved, and excluding none that will come unto him.</div></div>
+<div class="std-art"><div class="std-art-n">Q. 65.</div><div class="std-art-t">What special things are we to consider in reading the Scriptures? <strong>A.</strong> In reading the Scriptures we are to attend: First, to what we read with diligence, attention, and reverence, as the Word of God. Secondly, to come unto it with a meek and teachable spirit, as those that desire to know, believe, and obey the will of God. Thirdly, to meditate on what we read. Fourthly, to write it in our hearts. Fifthly, to make a diligent use of those means, whereunto God hath appointed the Scriptures to be a blessing unto us.</div></div></div>
+
+<div class="std-ch"><div class="std-ch-h">Of the Ten Commandments</div>
+<div class="std-art"><div class="std-art-n">Q. 98.</div><div class="std-art-t">Where is the moral law summarily comprehended? <strong>A.</strong> The moral law is summarily comprehended in the ten commandments, which were delivered by the voice of God upon Mount Sinai, and written by him in two tables of stone; and are recorded in the twentieth chapter of Exodus. The four first commandments containing our duty to God, and the other six our duty to man.</div></div>
+<div class="std-art"><div class="std-art-n">Q. 99.</div><div class="std-art-t">What rules are to be observed for the right understanding of the ten commandments? <strong>A.</strong> For the right understanding of the ten commandments, these rules are to be observed: That the law is perfect, and bindeth everyone to full conformity in the whole man unto the righteousness thereof, and unto entire obedience forever; so as to require the utmost perfection of every duty, and to forbid the least degree of every sin. That it is spiritual, and so reacheth the understanding, will, affections, and all other powers of the soul; as well as words, works, and gestures. That one and the same thing, in divers respects, is required or forbidden in several commandments. That where a duty is commanded, the contrary sin is forbidden; and, where a sin is forbidden, the contrary duty is commanded. That where a promise is annexed, the contrary threatening is included; and, where a threatening is annexed, the contrary promise is included. That the same things are sometimes expressly required or forbidden in more general or more particular terms.</div></div></div>
+`;}
+
+// ── WESTMINSTER SHORTER CATECHISM
+function getWSC(){return`
+<div class="std-ch"><div class="std-ch-h">Of Man's Chief End and God's Word</div>
+<div class="std-art"><div class="std-art-n">Q. 1.</div><div class="std-art-t">What is the chief end of man? <strong>A.</strong> Man's chief end is to glorify God, and to enjoy him forever.</div></div>
+<div class="std-art"><div class="std-art-n">Q. 2.</div><div class="std-art-t">What rule hath God given to direct us how we may glorify and enjoy him? <strong>A.</strong> The Word of God, which is contained in the Scriptures of the Old and New Testaments, is the only rule to direct us how we may glorify and enjoy him.</div></div>
+<div class="std-art"><div class="std-art-n">Q. 3.</div><div class="std-art-t">What do the Scriptures principally teach? <strong>A.</strong> The Scriptures principally teach what man is to believe concerning God, and what duty God requires of man.</div></div></div>
+
+<div class="std-ch"><div class="std-ch-h">Of God</div>
+<div class="std-art"><div class="std-art-n">Q. 4.</div><div class="std-art-t">What is God? <strong>A.</strong> God is a Spirit, infinite, eternal, and unchangeable, in his being, wisdom, power, holiness, justice, goodness, and truth.</div></div>
+<div class="std-art"><div class="std-art-n">Q. 5.</div><div class="std-art-t">Are there more Gods than one? <strong>A.</strong> There is but one only, the living and true God.</div></div>
+<div class="std-art"><div class="std-art-n">Q. 6.</div><div class="std-art-t">How many persons are there in the Godhead? <strong>A.</strong> There are three persons in the Godhead; the Father, the Son, and the Holy Ghost; and these three are one God, the same in substance, equal in power and glory.</div></div></div>
+
+<div class="std-ch"><div class="std-ch-h">Of Man's Sin and Misery</div>
+<div class="std-art"><div class="std-art-n">Q. 14.</div><div class="std-art-t">What is sin? <strong>A.</strong> Sin is any want of conformity unto, or transgression of, the law of God.</div></div>
+<div class="std-art"><div class="std-art-n">Q. 17.</div><div class="std-art-t">Into what estate did the fall bring mankind? <strong>A.</strong> The fall brought mankind into an estate of sin and misery.</div></div>
+<div class="std-art"><div class="std-art-n">Q. 20.</div><div class="std-art-t">Did God leave all mankind to perish in the estate of sin and misery? <strong>A.</strong> God having, out of his mere good pleasure, from all eternity, elected some to everlasting life, did enter into a covenant of grace, to deliver them out of the estate of sin and misery, and to bring them into an estate of salvation by a Redeemer.</div></div></div>
+
+<div class="std-ch"><div class="std-ch-h">Of Christ the Redeemer</div>
+<div class="std-art"><div class="std-art-n">Q. 21.</div><div class="std-art-t">Who is the Redeemer of God's elect? <strong>A.</strong> The only Redeemer of God's elect is the Lord Jesus Christ, who, being the eternal Son of God, became man, and so was, and continueth to be, God and man in two distinct natures, and one person, forever.</div></div>
+<div class="std-art"><div class="std-art-n">Q. 25.</div><div class="std-art-t">How doth Christ execute the office of a priest? <strong>A.</strong> Christ executeth the office of a priest, in his once offering up of himself a sacrifice to satisfy divine justice, and reconcile us to God; and in making continual intercession for us.</div></div></div>
+
+<div class="std-ch"><div class="std-ch-h">Of the Law of God</div>
+<div class="std-art"><div class="std-art-n">Q. 39.</div><div class="std-art-t">What is the duty which God requireth of man? <strong>A.</strong> The duty which God requireth of man, is obedience to his revealed will.</div></div>
+<div class="std-art"><div class="std-art-n">Q. 40.</div><div class="std-art-t">What did God at first reveal to man for the rule of his obedience? <strong>A.</strong> The rule which God at first revealed to man for his obedience, was the moral law.</div></div>
+<div class="std-art"><div class="std-art-n">Q. 41.</div><div class="std-art-t">Where is the moral law summarily comprehended? <strong>A.</strong> The moral law is summarily comprehended in the ten commandments.</div></div>
+<div class="std-art"><div class="std-art-n">Q. 42.</div><div class="std-art-t">What is the sum of the ten commandments? <strong>A.</strong> The sum of the ten commandments is, to love the Lord our God with all our heart, with all our soul, with all our strength, and with all our mind; and our neighbor as ourselves.</div></div></div>
+
+<div class="std-ch"><div class="std-ch-h">Of the Sacraments</div>
+<div class="std-art"><div class="std-art-n">Q. 92.</div><div class="std-art-t">What is a sacrament? <strong>A.</strong> A sacrament is a holy ordinance instituted by Christ; wherein, by sensible signs, Christ, and the benefits of the new covenant, are represented, sealed, and applied to believers.</div></div>
+<div class="std-art"><div class="std-art-n">Q. 94.</div><div class="std-art-t">What is baptism? <strong>A.</strong> Baptism is a sacrament, wherein the washing with water in the name of the Father, and of the Son, and of the Holy Ghost, doth signify and seal our ingrafting into Christ, and partaking of the benefits of the covenant of grace, and our engagement to be the Lord's.</div></div>
+<div class="std-art"><div class="std-art-n">Q. 96.</div><div class="std-art-t">What is the Lord's supper? <strong>A.</strong> The Lord's supper is a sacrament, wherein, by giving and receiving bread and wine, according to the appointment of Jesus Christ, his death is showed forth; and the worthy receivers are, not after a corporal and carnal manner, but by faith, made partakers of his body and blood, with all his benefits, to their spiritual nourishment, and growth in grace.</div></div></div>
+`;}
+
+// ── BCO NOTE
+function getBCO(){return`
+<div class="std-ch"><div class="std-ch-h">Book of Church Order</div>
+<div class="std-art"><div class="std-art-n"></div><div class="std-art-t">The Book of Church Order is the constitutional document governing the polity, worship, and discipline of the General Assembly. The current edition is available at pcaac.org. The BCO is referenced throughout the GA Minutes corpus loaded in this application — use the search feature to find specific chapter and section references (e.g., search "BCO 20-4" or "BCO 42").</div></div></div>
+<div class="std-ch"><div class="std-ch-h">The Preliminary Principles</div>
+<div class="std-art"><div class="std-art-n">I.</div><div class="std-art-t">That "God alone is Lord of the conscience, and hath left it free from the doctrines and commandments of men which are in any thing contrary to his Word, or beside it in matters of faith or worship;" therefore, the rights of private judgment in all matters that respect religion are universal and inalienable.</div></div>
+<div class="std-art"><div class="std-art-n">II.</div><div class="std-art-t">In perfect consistency with the above, every Christian Church, or union or association of particular churches, is entitled to declare the terms of admission into its communion, and the qualifications of its ministers and members, as well as the whole system of its internal government which Christ hath appointed.</div></div>
+<div class="std-art"><div class="std-art-n">III.</div><div class="std-art-t">Our blessed Savior, for the edification of the visible Church, which is his body, hath appointed officers, not only to preach the Gospel and administer the Sacraments, but also to exercise discipline, for the preservation both of truth and duty; and that it is incumbent upon these officers and upon the whole Church in whose name they act, to censure or cast out the erroneous and scandalous, observing in all cases, the rules contained in the Word of God.</div></div>
+<div class="std-art"><div class="std-art-n">IV.</div><div class="std-art-t">That truth is in order to goodness; and the great touchstone of truth, its tendency to promote holiness, according to our Savior's rule, "By their fruits ye shall know them." And that no opinion can be more pernicious or more absurd than that which brings truth and falsehood upon a level, and represents it as of no consequence what a man's opinions are. On the contrary, we are persuaded that there is an inseparable connection between faith and practice, truth and duty. Otherwise, it would be of no consequence either to discover truth or to embrace it.</div></div>
+<div class="std-art"><div class="std-art-n">V.</div><div class="std-art-t">That while we assert for ourselves a liberty of conscience, as above mentioned, we are sensible of the duty we owe to our brethren and to the Church, which will not allow us to abuse this liberty to the injury of others, or of the whole body.</div></div>
+<div class="std-art"><div class="std-art-n">VI.</div><div class="std-art-t">That, in perfect consistency with the above, every Christian Church, or union or association of particular churches, is entitled to declare the terms of admission into its communion, and the qualifications of its ministers and members, as well as the whole system of its internal government which Christ hath appointed; that in the exercise of this right they may, notwithstanding, err; and that an error in this exercise, whether it be by making the terms of communion either too lax or too narrow, is in both cases sinful and injurious.</div></div></div>
+`;}
+
+// ── SERVICE WORKER REGISTRATION
+if('serviceWorker' in navigator){
+  window.addEventListener('load',()=>{
+    navigator.serviceWorker.register('sw.js').catch(()=>{});
+  });
+}
+
+boot();
+</script>
+</body>
+</html>
