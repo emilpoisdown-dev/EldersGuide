@@ -1,4 +1,4 @@
-const CACHE = 'elders-ga-guide-v1';
+const CACHE = 'elders-ga-guide-v2';
 const ASSETS = ['/', '/index.html', '/manifest.json', '/icon-192.png', '/icon-512.png'];
 
 self.addEventListener('install', e => {
@@ -17,7 +17,6 @@ self.addEventListener('activate', e => {
 
 self.addEventListener('fetch', e => {
   const url = new URL(e.request.url);
-  // Stream corpus_final.json from network, fall back to cache
   if (url.pathname.endsWith('corpus_final.json') || url.pathname.endsWith('corpus_index.json')) {
     e.respondWith(
       fetch(e.request).then(r => {
@@ -28,7 +27,6 @@ self.addEventListener('fetch', e => {
     );
     return;
   }
-  // Cache-first for everything else
   e.respondWith(
     caches.match(e.request).then(cached => cached || fetch(e.request).then(r => {
       if (r.ok) {

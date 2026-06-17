@@ -8,6 +8,7 @@
 <meta name="apple-mobile-web-app-title" content="Elder's GA Guide">
 <meta name="theme-color" content="#1B2A4A">
 <link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon-192.png" type="image/png">
 <link rel="apple-touch-icon" href="icon-192.png">
 <title>Elder's GA Guide</title>
 <style>
@@ -21,213 +22,341 @@
   --text:#1a1a1a;--white:#fff;
   --red:#c0392b;--green:#2d6a2d;
   --sans:'Arial',sans-serif;--serif:'Georgia','Times New Roman',serif;
+  --bottom-nav-h:62px;
+  --safe-bottom:env(safe-area-inset-bottom,0px);
+  --safe-top:env(safe-area-inset-top,0px);
 }
-html,body{height:100%;overflow:hidden;background:var(--navy-d)}
+html,body{height:100%;overflow:hidden;background:var(--navy-d);-webkit-tap-highlight-color:transparent}
 body{font-family:var(--serif);color:var(--text);display:flex;flex-direction:column}
 
-/* HEADER */
-#app-header{background:var(--navy);border-bottom:3px solid var(--gold);flex-shrink:0;z-index:100}
-.hdr{display:flex;align-items:center;gap:16px;padding:11px 20px 9px;max-width:1400px;margin:0 auto}
+/* ── HEADER ── */
+#app-header{
+  background:var(--navy);border-bottom:3px solid var(--gold);
+  flex-shrink:0;padding-top:var(--safe-top);
+}
+.hdr{display:flex;align-items:center;gap:12px;padding:10px 16px 9px}
 .hdr-brand{flex:1;min-width:0}
-.hdr-eye{font-family:var(--sans);font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);margin-bottom:2px}
-.hdr-title{font-size:17px;font-weight:normal;color:var(--cream);letter-spacing:.01em}
-.hdr-sub{font-family:var(--sans);font-size:11px;color:#5a7898;margin-top:1px}
-.hdr-btns{display:flex;gap:6px;flex-shrink:0}
-.hbtn{background:rgba(255,255,255,.07);border:1px solid rgba(184,151,46,.3);color:var(--cream-d);
-  font-family:var(--sans);font-size:11px;padding:6px 11px;border-radius:2px;cursor:pointer;white-space:nowrap;transition:background .15s}
-.hbtn:hover{background:rgba(184,151,46,.15);border-color:var(--gold)}
-.hbtn.on{background:var(--gold);color:var(--navy-d);border-color:var(--gold);font-weight:bold}
+.hdr-eye{font-family:var(--sans);font-size:8px;letter-spacing:.16em;text-transform:uppercase;color:var(--gold);margin-bottom:1px}
+.hdr-title{font-size:16px;font-weight:normal;color:var(--cream)}
+.hdr-about{background:none;border:1px solid rgba(184,151,46,.3);color:var(--cream-d);
+  font-family:var(--sans);font-size:11px;padding:6px 12px;border-radius:2px;cursor:pointer;
+  white-space:nowrap;flex-shrink:0}
+.hdr-about:hover{border-color:var(--gold);background:rgba(184,151,46,.1)}
 
-/* LAYOUT */
-#app-body{display:flex;flex:1;overflow:hidden}
+/* ── SCREEN SYSTEM ── */
+#app-body{flex:1;overflow:hidden;position:relative}
+.screen{
+  position:absolute;inset:0;bottom:calc(var(--bottom-nav-h) + var(--safe-bottom));
+  display:none;flex-direction:column;overflow:hidden;
+  background:var(--cream);
+  transition:transform .22s ease;
+}
+.screen.active{display:flex}
 
-/* SIDEBAR */
-#sidebar{width:272px;flex-shrink:0;background:var(--navy-d);display:flex;flex-direction:column;
-  overflow:hidden;border-right:1px solid rgba(184,151,46,.2);transition:width .22s ease,transform .22s ease}
-#sidebar.collapsed{width:0}
-.sb-sec{border-bottom:1px solid rgba(255,255,255,.05);flex-shrink:0}
-.sb-lbl{font-family:var(--sans);font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:var(--gold);padding:13px 14px 5px;display:block}
-.nav-tabs{display:flex;flex-direction:column;gap:1px;padding:3px 8px 9px}
-.ntab{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:2px;cursor:pointer;
-  font-family:var(--sans);font-size:12px;color:#7a96b4;transition:background .12s,color .12s;
-  border:none;background:none;text-align:left;width:100%}
-.ntab:hover{background:rgba(255,255,255,.05);color:var(--cream)}
-.ntab.on{background:rgba(184,151,46,.14);color:var(--gold)}
-.ntab .ico{font-size:13px;width:18px;text-align:center;flex-shrink:0}
-.ntab .cnt{margin-left:auto;font-size:10px;background:rgba(255,255,255,.07);padding:1px 6px;border-radius:10px;color:var(--slate-l)}
-.ntab.on .cnt{background:rgba(184,151,46,.2);color:var(--gold)}
-.filter-area{padding:7px 8px 9px}
-.filter-row{display:flex;gap:5px;margin-bottom:5px}
-.fsel{flex:1;background:rgba(255,255,255,.05);border:1px solid rgba(212,201,176,.18);color:var(--cream-d);
-  font-family:var(--sans);font-size:11px;padding:6px 7px;border-radius:2px;outline:none}
-.fsel:focus{border-color:var(--gold)}
-.fsel option{background:var(--navy-d);color:var(--cream)}
-.srch-wrap{position:relative}
-.srch{width:100%;background:rgba(255,255,255,.06);border:1px solid rgba(212,201,176,.18);
-  color:var(--cream);font-family:var(--sans);font-size:12px;padding:8px 30px 8px 9px;
-  border-radius:2px;outline:none}
-.srch:focus{border-color:var(--gold)}
-.srch::placeholder{color:#3a5068}
-.srch-x{position:absolute;right:7px;top:50%;transform:translateY(-50%);color:#3a5068;
-  cursor:pointer;font-size:14px;background:none;border:none;display:none}
-.srch-x.vis{display:block}
-#result-list{flex:1;overflow-y:auto;padding:3px 5px 20px}
-#result-list::-webkit-scrollbar{width:3px}
-#result-list::-webkit-scrollbar-thumb{background:rgba(184,151,46,.2);border-radius:2px}
-.ritem{padding:9px 9px 8px;border-radius:2px;cursor:pointer;border-left:2px solid transparent;
-  margin-bottom:2px;transition:background .1s,border-color .1s}
-.ritem:hover{background:rgba(255,255,255,.04);border-left-color:rgba(184,151,46,.35)}
+/* ── BOTTOM NAV ── */
+#bottom-nav{
+  position:fixed;bottom:0;left:0;right:0;
+  height:calc(var(--bottom-nav-h) + var(--safe-bottom));
+  background:var(--navy);border-top:2px solid var(--gold);
+  display:flex;align-items:flex-start;
+  padding-bottom:var(--safe-bottom);
+  z-index:100;
+}
+.bnav-btn{
+  flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:3px;padding:10px 4px 6px;cursor:pointer;
+  border:none;background:none;color:#5a7898;
+  transition:color .15s;min-height:44px;
+  -webkit-tap-highlight-color:transparent;
+}
+.bnav-btn:active{background:rgba(255,255,255,.05)}
+.bnav-btn.active{color:var(--gold)}
+.bnav-icon{font-size:20px;line-height:1}
+.bnav-label{font-family:var(--sans);font-size:9px;letter-spacing:.04em;text-transform:uppercase}
+
+/* ── BROWSE SCREEN ── */
+#screen-browse{background:var(--navy-d)}
+.browse-tabs{
+  display:flex;background:var(--navy);border-bottom:1px solid rgba(184,151,46,.2);
+  flex-shrink:0;overflow-x:auto;
+  -webkit-overflow-scrolling:touch;
+}
+.browse-tabs::-webkit-scrollbar{display:none}
+.btab{
+  flex-shrink:0;padding:12px 14px;font-family:var(--sans);font-size:11px;
+  color:#5a7898;cursor:pointer;white-space:nowrap;
+  border:none;background:none;border-bottom:2px solid transparent;
+  transition:color .12s,border-color .12s;
+}
+.btab.active{color:var(--gold);border-bottom-color:var(--gold)}
+#result-list{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:4px 0 8px}
+#result-list::-webkit-scrollbar{display:none}
+.ritem{
+  display:flex;flex-direction:column;gap:4px;
+  padding:15px 16px;border-bottom:1px solid rgba(255,255,255,.07);
+  cursor:pointer;border-left:3px solid transparent;
+  transition:background .1s,border-color .1s;
+  min-height:64px;
+}
+.ritem:active{background:rgba(255,255,255,.04)}
 .ritem.on{background:rgba(184,151,46,.09);border-left-color:var(--gold)}
-.ri-yr{font-family:var(--sans);font-size:9px;letter-spacing:.09em;text-transform:uppercase;color:var(--gold-dim);margin-bottom:2px}
-.ri-t{font-size:11.5px;color:var(--cream-d);line-height:1.35;font-family:var(--sans)}
-.ri-m{font-family:var(--sans);font-size:10px;color:#4a6078;margin-top:2px}
-.ri-tags{display:flex;flex-wrap:wrap;gap:3px;margin-top:4px}
-.ri-tag{font-family:var(--sans);font-size:9px;background:rgba(184,151,46,.1);color:var(--gold-dim);padding:1px 5px;border-radius:10px;text-transform:capitalize}
-.no-res{font-family:var(--sans);font-size:12px;color:#3a5068;font-style:italic;padding:18px 10px;text-align:center;line-height:1.7}
+.ri-yr{font-family:var(--sans);font-size:9px;letter-spacing:.09em;text-transform:uppercase;color:var(--gold-dim)}
+.ri-t{font-size:14px;color:var(--cream-d);line-height:1.4;font-family:var(--sans);font-weight:bold}
+.ri-m{font-family:var(--sans);font-size:11px;color:#5a7090;margin-top:2px}
+.ri-tags{display:flex;flex-wrap:wrap;gap:3px;margin-top:3px}
+.ri-tag{font-family:var(--sans);font-size:9px;background:rgba(184,151,46,.1);color:var(--gold-dim);padding:1px 6px;border-radius:10px}
+.no-res{font-family:var(--sans);font-size:13px;color:#3a5068;font-style:italic;padding:24px 16px;text-align:center;line-height:1.7}
+.load-more{
+  display:block;width:calc(100% - 32px);margin:12px 16px;
+  padding:12px;background:rgba(184,151,46,.12);border:1px solid rgba(184,151,46,.3);
+  color:var(--gold);font-family:var(--sans);font-size:12px;
+  border-radius:2px;cursor:pointer;text-align:center;
+}
 
-/* MAIN PANEL */
-#main-panel{flex:1;display:flex;flex-direction:column;overflow:hidden;background:var(--cream)}
-#panel-toolbar{background:var(--cream-d);border-bottom:1px solid var(--rule);padding:7px 18px;
-  display:flex;align-items:center;gap:9px;flex-shrink:0}
-.tb-title{font-size:13px;color:var(--navy);font-family:var(--sans);font-weight:bold;flex:1;
-  min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.tbtn{background:none;border:1px solid var(--rule);color:var(--slate);font-family:var(--sans);
-  font-size:11px;padding:5px 10px;border-radius:2px;cursor:pointer;white-space:nowrap;transition:background .1s}
-.tbtn:hover{background:var(--cream-dd)}
-.tbtn.bkd{background:rgba(184,151,46,.1);border-color:var(--gold);color:var(--gold-dim)}
-#sb-toggle{background:var(--navy);border-color:var(--navy);color:var(--cream)}
-#sb-toggle:hover{background:var(--navy-l)}
-#doc-view{flex:1;overflow-y:auto;padding:28px 36px;max-width:860px;width:100%;margin:0 auto}
-#doc-view::-webkit-scrollbar{width:5px}
-#doc-view::-webkit-scrollbar-thumb{background:var(--rule);border-radius:2px}
+/* ── SEARCH SCREEN ── */
+#screen-search{background:var(--navy-d)}
+.search-bar{
+  background:var(--navy);border-bottom:1px solid rgba(184,151,46,.2);
+  padding:10px 12px;display:flex;gap:8px;align-items:center;flex-shrink:0;
+}
+.srch-input{
+  flex:1;background:rgba(255,255,255,.08);border:1px solid rgba(212,201,176,.2);
+  color:var(--cream);font-family:var(--sans);font-size:15px;
+  padding:10px 12px;border-radius:6px;outline:none;
+  -webkit-appearance:none;
+}
+.srch-input:focus{border-color:var(--gold);background:rgba(255,255,255,.11)}
+.srch-input::placeholder{color:#3a5068}
+.srch-clear{
+  background:none;border:none;color:#5a7898;font-size:18px;
+  padding:8px;cursor:pointer;flex-shrink:0;
+}
+.filter-row{
+  display:flex;gap:8px;padding:8px 12px;
+  background:var(--navy-d);border-bottom:1px solid rgba(255,255,255,.05);
+  flex-shrink:0;overflow-x:auto;
+}
+.filter-row::-webkit-scrollbar{display:none}
+.fsel{
+  background:rgba(255,255,255,.07);border:1px solid rgba(212,201,176,.18);
+  color:var(--cream-d);font-family:var(--sans);font-size:12px;
+  padding:7px 10px;border-radius:6px;outline:none;
+  -webkit-appearance:none;flex-shrink:0;
+}
+.fsel option{background:var(--navy-d);color:var(--cream)}
+#search-results{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch}
+#search-results::-webkit-scrollbar{display:none}
 
-/* WELCOME */
-#welcome{display:flex;flex-direction:column;align-items:center;justify-content:center;
-  min-height:60vh;padding:40px 20px;text-align:center}
-
-.w-h{font-size:24px;color:var(--navy);font-weight:normal;margin-bottom:6px}
-.w-rule{width:44px;height:2px;background:var(--gold);margin:10px auto 14px}
-.w-p{font-family:var(--sans);font-size:13px;color:var(--slate);line-height:1.75;max-width:460px;margin-bottom:22px}
-.w-stats{display:flex;gap:20px;justify-content:center;flex-wrap:wrap;margin-bottom:24px}
-.stat{background:var(--cream-d);border:1px solid var(--rule);border-top:2px solid var(--gold);padding:11px 18px;text-align:center;min-width:90px}
-.stat-n{font-size:20px;color:var(--navy)}
-.stat-l{font-family:var(--sans);font-size:10px;color:var(--slate-l);letter-spacing:.07em;text-transform:uppercase;margin-top:2px}
-.w-note{font-family:var(--sans);font-size:11px;color:var(--slate-l);border:1px solid var(--rule);
-  padding:10px 14px;background:var(--white);border-left:3px solid var(--gold-dim);
-  max-width:460px;line-height:1.6;text-align:left}
-
-/* DOCUMENT */
-.doc-hdr{border-bottom:2px solid var(--rule);padding-bottom:14px;margin-bottom:22px}
-.doc-eye{font-family:var(--sans);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);margin-bottom:5px}
-.doc-title{font-size:21px;color:var(--navy);font-weight:normal;line-height:1.3;margin-bottom:7px}
-.doc-metas{display:flex;flex-wrap:wrap;gap:10px;margin-top:8px}
+/* ── DOC VIEW SCREEN ── */
+#screen-doc{background:var(--cream)}
+.doc-toolbar{
+  background:var(--cream-d);border-bottom:1px solid var(--rule);
+  padding:10px 14px;display:flex;align-items:center;gap:8px;flex-shrink:0;
+}
+.doc-back{
+  background:var(--navy);color:var(--cream);border:none;
+  padding:8px 14px;border-radius:6px;font-family:var(--sans);font-size:12px;
+  cursor:pointer;white-space:nowrap;flex-shrink:0;
+}
+.doc-toolbar-title{
+  flex:1;font-family:var(--sans);font-size:12px;color:var(--navy);
+  font-weight:bold;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+}
+.doc-action-btns{display:flex;gap:6px;flex-shrink:0}
+.dac-btn{
+  background:none;border:1px solid var(--rule);color:var(--slate);
+  font-family:var(--sans);font-size:11px;padding:7px 10px;
+  border-radius:6px;cursor:pointer;white-space:nowrap;
+}
+.dac-btn.bkd{background:rgba(184,151,46,.1);border-color:var(--gold);color:var(--gold-dim)}
+#doc-scroll{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:20px 16px 40px}
+#doc-scroll::-webkit-scrollbar{display:none}
+.doc-hdr{border-bottom:2px solid var(--rule);padding-bottom:14px;margin-bottom:20px}
+.doc-eye{font-family:var(--sans);font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);margin-bottom:5px}
+.doc-title{font-size:20px;color:var(--navy);font-weight:normal;line-height:1.3;margin-bottom:7px}
+.doc-metas{display:flex;flex-direction:column;gap:4px;margin-top:8px}
 .doc-meta{font-family:var(--sans);font-size:11px;color:var(--slate-l)}
 .doc-meta strong{color:var(--slate)}
 .tag-row{display:flex;flex-wrap:wrap;gap:4px;margin-top:9px}
-.tag{font-family:var(--sans);font-size:10px;padding:2px 8px;border-radius:10px;border:1px solid var(--rule);color:var(--slate);background:var(--cream-d);text-transform:capitalize}
+.tag{font-family:var(--sans);font-size:10px;padding:3px 8px;border-radius:10px;border:1px solid var(--rule);color:var(--slate);background:var(--cream-d);transition:background .12s,border-color .12s}
+.tag:hover{background:var(--cream-dd);border-color:var(--slate-l)}
+.tag.bco:hover{background:rgba(27,42,74,.12);border-color:var(--navy)}
+.tag.topic:hover{background:rgba(184,151,46,.18);border-color:var(--gold)}
 .tag.bco{background:rgba(27,42,74,.06);border-color:rgba(27,42,74,.18);color:var(--navy)}
 .tag.topic{background:rgba(184,151,46,.09);border-color:rgba(184,151,46,.28);color:var(--gold-dim)}
-.doc-body{font-size:14.5px;line-height:1.85;color:var(--text)}
-.doc-body p{margin-bottom:13px}
-.chunk-nav{display:flex;align-items:center;justify-content:space-between;margin-top:26px;
-  padding-top:14px;border-top:1px solid var(--rule);font-family:var(--sans);font-size:12px;color:var(--slate-l)}
-.cnbtn{background:var(--navy);color:var(--cream);border:none;padding:7px 13px;border-radius:2px;
-  cursor:pointer;font-family:var(--sans);font-size:11px;transition:background .1s}
-.cnbtn:hover{background:var(--navy-l)}
-.cnbtn:disabled{background:var(--cream-dd);color:var(--slate-l);cursor:not-allowed}
-.notes-wrap{margin-top:22px;padding-top:14px;border-top:1px solid var(--rule)}
+.doc-body{font-size:15px;line-height:1.9;color:var(--text);max-width:720px}
+.doc-body p{margin-bottom:14px;text-align:left}
+.doc-body h3{font-size:12px;font-family:var(--sans);font-weight:bold;color:var(--navy);
+  margin:22px 0 8px;letter-spacing:.06em;text-transform:uppercase;
+  border-bottom:1px solid var(--rule);padding-bottom:4px}
+.doc-section-h{
+  font-family:var(--sans);font-size:14px;font-weight:bold;color:var(--navy);
+  margin:24px 0 8px;padding:8px 12px;
+  background:var(--cream-d);border-left:3px solid var(--gold);
+  border-radius:0 2px 2px 0;
+}
+.doc-table{
+  display:grid;margin:14px 0 18px;
+  border:1px solid var(--rule);border-radius:2px;overflow:hidden;
+  font-family:var(--sans);font-size:12px;
+}
+.doc-table-row{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));
+  border-bottom:1px solid var(--rule-l);
+}
+.doc-table-row:last-child{border-bottom:none}
+.doc-table-row:nth-child(even){background:var(--cream-d)}
+.doc-table-cell{
+  padding:6px 10px;color:var(--text);border-right:1px solid var(--rule-l);word-break:break-word;
+}
+.doc-table-cell:last-child{border-right:none}
+.doc-resolution{
+  background:rgba(27,42,74,.04);border-left:3px solid var(--navy);
+  padding:10px 14px;margin:12px 0;font-style:italic;
+  font-size:14px;line-height:1.7;border-radius:0 2px 2px 0;
+}
+.pdf-banner{
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+  background:var(--navy);color:var(--cream);
+  padding:10px 14px;margin-bottom:20px;border-radius:2px;
+  font-family:var(--sans);font-size:12px;
+}
+.pdf-banner-btn{
+  background:var(--gold);color:var(--navy-d);border:none;
+  padding:7px 14px;border-radius:4px;font-family:var(--sans);
+  font-size:12px;font-weight:bold;cursor:pointer;white-space:nowrap;flex-shrink:0;
+}
+.pdf-banner-btn:hover{background:var(--gold-l)}
+.notes-wrap{margin-top:24px;padding-top:16px;border-top:1px solid var(--rule)}
 .notes-lbl{font-family:var(--sans);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--slate-l);margin-bottom:7px;display:block}
-.notes-ta{width:100%;min-height:78px;border:1px solid var(--rule);border-radius:2px;padding:9px 11px;
-  font-family:var(--serif);font-size:13.5px;color:var(--text);background:var(--white);resize:vertical;outline:none;line-height:1.6}
+.notes-ta{width:100%;min-height:100px;border:1px solid var(--rule);border-radius:6px;padding:10px 12px;
+  font-family:var(--serif);font-size:14px;color:var(--text);background:var(--white);resize:vertical;outline:none;line-height:1.6}
 .notes-ta:focus{border-color:var(--navy)}
 .notes-saved{font-family:var(--sans);font-size:10px;color:var(--green);margin-top:4px;opacity:0;transition:opacity .3s}
 .notes-saved.show{opacity:1}
 
-/* STANDARDS */
-#std-panel{flex:1;display:none;flex-direction:column;overflow:hidden;background:var(--cream)}
-#std-panel.vis{display:flex}
-.std-tabs{display:flex;background:var(--navy);border-bottom:2px solid var(--gold);flex-shrink:0;overflow-x:auto}
-.stab{font-family:var(--sans);font-size:11px;color:#5a7898;padding:10px 15px;cursor:pointer;
-  white-space:nowrap;border:none;border-bottom:2px solid transparent;margin-bottom:-2px;
-  background:none;transition:color .12s,border-color .12s}
-.stab:hover{color:var(--cream)}
-.stab.on{color:var(--gold);border-bottom-color:var(--gold)}
-#std-content{flex:1;overflow-y:auto;padding:28px 36px;max-width:840px;margin:0 auto;width:100%}
-#std-content::-webkit-scrollbar{width:5px}
-#std-content::-webkit-scrollbar-thumb{background:var(--rule);border-radius:2px}
-.std-dtitle{font-size:21px;color:var(--navy);font-weight:normal;margin-bottom:3px}
-.std-dsub{font-family:var(--sans);font-size:12px;color:var(--slate-l);margin-bottom:18px}
-.std-rule{width:44px;height:2px;background:var(--gold);margin:0 0 22px}
-.std-ch{margin-bottom:26px}
-.std-ch-h{font-size:14px;color:var(--navy);margin-bottom:9px;border-left:3px solid var(--gold);padding-left:11px;font-weight:normal}
-.std-art{margin-bottom:11px;padding-left:11px}
-.std-art-n{font-family:var(--sans);font-size:10px;color:var(--gold-dim);margin-bottom:2px;letter-spacing:.05em}
-.std-art-t{font-size:14px;line-height:1.8;color:var(--text)}
-
-/* MODALS */
-.overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:500;display:flex;
-  align-items:center;justify-content:center;padding:20px;opacity:0;pointer-events:none;transition:opacity .18s}
-.overlay.open{opacity:1;pointer-events:all}
-.modal{background:var(--cream);max-width:600px;width:100%;max-height:85vh;overflow-y:auto;
-  border-top:3px solid var(--gold);box-shadow:0 20px 60px rgba(0,0,0,.4)}
-.modal-hdr{display:flex;align-items:center;justify-content:space-between;padding:16px 22px 12px;
-  border-bottom:1px solid var(--rule);position:sticky;top:0;background:var(--cream);z-index:1}
-.modal-ttl{font-size:17px;color:var(--navy);font-weight:normal}
-.modal-x{background:none;border:none;font-size:19px;color:var(--slate-l);cursor:pointer;padding:2px 5px}
-.modal-x:hover{color:var(--navy)}
-.modal-body{padding:18px 22px 22px}
-
-.about-h{font-size:18px;color:var(--navy);text-align:center;font-weight:normal;margin-bottom:3px}
-.about-rule{width:36px;height:2px;background:var(--gold);margin:9px auto 14px}
-.about-p{font-family:var(--sans);font-size:13px;color:var(--slate);line-height:1.7;margin-bottom:10px}
-.disclaimer{border:1px solid var(--rule);border-left:3px solid var(--gold-dim);padding:13px 15px;background:var(--white);margin:14px 0}
-.disc-lbl{font-family:var(--sans);font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold-dim);margin-bottom:5px}
-.disclaimer p{font-family:var(--sans);font-size:12px;color:var(--slate);line-height:1.65}
-.src-h{font-family:var(--sans);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--slate-l);margin:14px 0 7px}
-.src-ul{font-family:var(--sans);font-size:12px;color:var(--slate);line-height:1.8;padding-left:18px}
-.docket-item{display:flex;align-items:center;gap:9px;padding:9px 0;border-bottom:1px solid var(--rule-l)}
-.docket-item:last-child{border-bottom:none}
+/* ── DOCKET SCREEN ── */
+#screen-docket{background:var(--cream)}
+.screen-header{
+  background:var(--navy);border-bottom:2px solid var(--gold);
+  padding:14px 16px;flex-shrink:0;
+}
+.screen-header h2{font-size:17px;color:var(--cream);font-weight:normal}
+.screen-header p{font-family:var(--sans);font-size:11px;color:#5a7898;margin-top:3px}
+#docket-list{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:8px 0}
+#docket-list::-webkit-scrollbar{display:none}
+.docket-item{display:flex;align-items:center;gap:10px;padding:14px 16px;border-bottom:1px solid var(--rule-l)}
 .dkt-info{flex:1;min-width:0}
 .dkt-yr{font-family:var(--sans);font-size:10px;color:var(--gold-dim);margin-bottom:2px}
 .dkt-t{font-size:13px;color:var(--navy);font-family:var(--sans);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.dkt-open{background:var(--navy);color:var(--cream);border:none;padding:4px 9px;
-  font-family:var(--sans);font-size:10px;border-radius:2px;cursor:pointer;flex-shrink:0}
-.dkt-rm{background:none;border:none;color:var(--slate-ll);cursor:pointer;font-size:15px;flex-shrink:0}
-.dkt-rm:hover{color:var(--red)}
-.empty-dkt{font-family:var(--sans);font-size:13px;color:var(--slate-l);font-style:italic;text-align:center;padding:18px}
+.dkt-open{background:var(--navy);color:var(--cream);border:none;padding:8px 12px;
+  font-family:var(--sans);font-size:11px;border-radius:6px;cursor:pointer;flex-shrink:0}
+.dkt-rm{background:none;border:none;color:var(--slate-ll);cursor:pointer;font-size:20px;flex-shrink:0;padding:4px}
+.empty-dkt{font-family:var(--sans);font-size:13px;color:var(--slate-l);font-style:italic;text-align:center;padding:40px 20px;line-height:1.7}
 
-/* STATUS BAR */
-#status-bar{background:var(--navy-d);padding:4px 18px;display:flex;align-items:center;
-  gap:10px;flex-shrink:0;border-top:1px solid rgba(255,255,255,.04)}
-.sdot{width:5px;height:5px;border-radius:50%;background:#2d7a2d;flex-shrink:0}
-.sdot.loading{background:var(--gold);animation:pulse 1s infinite}
-.sdot.warn{background:var(--gold-dim)}
-@keyframes pulse{0%,100%{opacity:.35}50%{opacity:1}}
-#stxt{font-family:var(--sans);font-size:10px;color:#3a5268}
-.ssep{color:#1e2e42;font-size:10px}
-#bk-status{font-family:var(--sans);font-size:10px;color:#3a5268}
+/* ── HELP SCREEN ── */
+#screen-help{background:var(--cream)}
+#help-content{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:0 0 40px}
+#help-content::-webkit-scrollbar{display:none}
+.help-hero{background:var(--navy);padding:20px 16px 18px;border-bottom:3px solid var(--gold)}
+.help-hero h1{font-size:20px;color:var(--cream);font-weight:normal;margin-bottom:4px}
+.help-hero p{font-family:var(--sans);font-size:12px;color:#5a7898;line-height:1.5}
+.help-section{padding:20px 16px 0}
+.help-section h2{font-family:var(--sans);font-size:11px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--gold-dim);margin-bottom:12px;padding-bottom:6px;border-bottom:1px solid var(--rule)}
+.help-card{background:var(--white);border:1px solid var(--rule);border-left:3px solid var(--gold);
+  padding:12px 14px;margin-bottom:10px;border-radius:2px}
+.help-card h3{font-family:var(--sans);font-size:13px;color:var(--navy);margin-bottom:5px;font-weight:bold}
+.help-card p{font-family:var(--sans);font-size:12px;color:var(--slate);line-height:1.65}
+.help-tip{background:rgba(184,151,46,.07);border:1px solid rgba(184,151,46,.25);
+  padding:10px 14px;margin-bottom:10px;border-radius:2px}
+.help-tip p{font-family:var(--sans);font-size:12px;color:var(--slate);line-height:1.65}
+.help-tip strong{color:var(--gold-dim)}
+.disclaimer-box{margin:20px 16px;background:var(--white);border:1px solid var(--rule);
+  border-left:3px solid var(--gold-dim);padding:14px}
+.disc-lbl{font-family:var(--sans);font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold-dim);margin-bottom:6px}
+.disclaimer-box p{font-family:var(--sans);font-size:11px;color:var(--slate);line-height:1.65}
 
-/* LOADING */
-#loading{position:fixed;inset:0;background:var(--navy-d);z-index:999;display:flex;
-  flex-direction:column;align-items:center;justify-content:center;gap:14px;transition:opacity .5s}
+/* ── WELCOME (browse screen empty state) ── */
+#welcome{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  flex:1;padding:32px 20px;text-align:center;
+}
+.w-h{font-size:22px;color:var(--cream);font-weight:normal;margin-bottom:6px}
+.w-rule{width:40px;height:2px;background:var(--gold);margin:10px auto 14px}
+.w-p{font-family:var(--sans);font-size:13px;color:#5a7898;line-height:1.75;max-width:340px;margin-bottom:22px}
+.w-stats{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-bottom:20px}
+.stat{background:rgba(255,255,255,.05);border:1px solid rgba(184,151,46,.2);border-top:2px solid var(--gold);
+  padding:10px 16px;text-align:center;min-width:80px}
+.stat-n{font-size:20px;color:var(--cream);font-family:var(--serif)}
+.stat-l{font-family:var(--sans);font-size:9px;color:#5a7898;letter-spacing:.07em;text-transform:uppercase;margin-top:2px}
+.w-start-btn{
+  background:var(--gold);color:var(--navy-d);border:none;
+  padding:14px 28px;font-family:var(--sans);font-size:14px;font-weight:bold;
+  border-radius:6px;cursor:pointer;letter-spacing:.04em;
+}
+
+/* ── ABOUT MODAL ── */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:500;
+  display:flex;align-items:flex-end;justify-content:center;
+  opacity:0;pointer-events:none;transition:opacity .2s}
+.overlay.open{opacity:1;pointer-events:all}
+.modal{background:var(--cream);width:100%;max-width:600px;max-height:85vh;
+  overflow-y:auto;border-top:3px solid var(--gold);border-radius:8px 8px 0 0;
+  box-shadow:0 -10px 40px rgba(0,0,0,.3)}
+.modal-hdr{display:flex;align-items:center;justify-content:space-between;
+  padding:16px 20px 12px;border-bottom:1px solid var(--rule);
+  position:sticky;top:0;background:var(--cream);z-index:1}
+.modal-ttl{font-size:16px;color:var(--navy);font-weight:normal}
+.modal-x{background:none;border:none;font-size:22px;color:var(--slate-l);cursor:pointer;padding:4px 8px}
+.modal-body{padding:16px 20px 32px}
+.about-h{font-size:17px;color:var(--navy);text-align:center;font-weight:normal;margin-bottom:3px}
+.about-rule{width:34px;height:2px;background:var(--gold);margin:9px auto 13px}
+.about-p{font-family:var(--sans);font-size:13px;color:var(--slate);line-height:1.7;margin-bottom:10px}
+.src-h{font-family:var(--sans);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--slate-l);margin:14px 0 7px}
+.src-ul{font-family:var(--sans);font-size:12px;color:var(--slate);line-height:1.8;padding-left:18px}
+
+/* ── LOADING ── */
+#loading{position:fixed;inset:0;background:var(--navy-d);z-index:999;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;
+  transition:opacity .5s}
 #loading.done{opacity:0;pointer-events:none}
-
-.ld-title{color:var(--cream);font-size:19px;font-weight:normal;font-family:var(--serif)}
-.ld-bar-w{width:240px;height:3px;background:rgba(255,255,255,.08);border-radius:2px;overflow:hidden}
+.ld-title{color:var(--cream);font-size:20px;font-weight:normal;font-family:var(--serif)}
+.ld-bar-w{width:220px;height:3px;background:rgba(255,255,255,.08);border-radius:2px;overflow:hidden}
 .ld-bar{height:100%;background:var(--gold);width:0%;transition:width .3s ease;border-radius:2px}
 .ld-sub{font-family:var(--sans);font-size:12px;color:#3a5268}
-@keyframes fi{from{opacity:0;transform:scale(.85)}to{opacity:1;transform:scale(1)}}
 
-/* RESPONSIVE */
-@media(max-width:768px){
-  #sidebar{position:fixed;left:0;top:0;bottom:0;z-index:200;width:275px;transition:transform .22s}
-  #sidebar.collapsed{transform:translateX(-100%);width:275px}
-  #doc-view,#std-content{padding:18px 14px}
-  .hdr-sub{display:none}
+/* ── DESKTOP OVERRIDES (>768px) ── */
+@media(min-width:769px){
+  #bottom-nav{display:none}
+  .screen{bottom:0}
+  #app-body{display:grid;grid-template-columns:280px 1fr;grid-template-rows:1fr}
+  #screen-browse{display:flex;position:relative;inset:auto;height:100%}
+  #screen-doc{display:flex;position:relative;inset:auto;height:100%}
+  #screen-search,#screen-standards,#screen-docket,#screen-help{
+    position:fixed;right:0;top:56px;bottom:0;width:400px;
+    border-left:2px solid var(--gold);box-shadow:-10px 0 30px rgba(0,0,0,.2);
+    z-index:50;display:none;
+  }
+  #screen-search.active,#screen-standards.active,#screen-docket.active,#screen-help.active{display:flex}
+  .hdr{padding:10px 20px 9px}
+  .hdr-eye{font-size:9px}
+  .hdr-title{font-size:17px}
+  #doc-scroll{padding:28px 36px 40px}
+  .doc-back{display:none}
+  .doc-title{font-size:22px}
+  .doc-body{font-size:14.5px}
+  .ritem{padding:10px 14px}
+  .hdr-btns-desktop{display:flex;gap:6px}
+  .hdr-btn-d{background:rgba(255,255,255,.07);border:1px solid rgba(184,151,46,.3);
+    color:var(--cream-d);font-family:var(--sans);font-size:11px;padding:6px 12px;
+    border-radius:2px;cursor:pointer;white-space:nowrap}
+  .hdr-btn-d:hover{background:rgba(184,151,46,.15);border-color:var(--gold)}
+  .hdr-btn-d.on{background:var(--gold);color:var(--navy-d);border-color:var(--gold)}
 }
-@media(max-width:480px){
-  .hdr-title{font-size:14px}
-  .hbtn span{display:none}
+@media(max-width:768px){
+  .hdr-btns-desktop{display:none}
+  #screen-doc .doc-back{display:flex}
 }
 </style>
 </head>
@@ -241,112 +370,219 @@ body{font-family:var(--serif);color:var(--text);display:flex;flex-direction:colu
 
 <header id="app-header">
   <div class="hdr">
+    <div class="hdr-icon"><img src="icon-192.png" alt="Elder's GA Guide" style="width:44px;height:44px;border-radius:4px;border:1px solid rgba(184,151,46,.4);display:block"></div>
     <div class="hdr-brand">
-      <div class="hdr-eye">Ruling &amp; Teaching Elders Helper to the General Assembly</div>
-      <div class="hdr-title">Elder's GA Guide</div>
-      <div class="hdr-sub">General Assembly Reference · 1973 to Present</div>
+      <div class="hdr-eye">Ruling &amp; Teaching Elders · General Assembly</div>
+      <div class="hdr-title">Elder's GA Guide <span style="font-family:var(--sans);font-size:10px;color:var(--gold);letter-spacing:.08em;vertical-align:middle;margin-left:6px;opacity:.8">BETA v1</span></div>
     </div>
-    <div class="hdr-btns">
-      <button class="hbtn" onclick="openDocket()">📋 <span>Docket</span></button>
-      <button class="hbtn" id="std-btn" onclick="toggleStd()">📖 <span>Standards</span></button>
-      <button class="hbtn" onclick="openAbout()">ℹ <span>About</span></button>
+    <div class="hdr-btns-desktop">
+      <button class="hdr-btn-d" onclick="showDesktopPanel('screen-search')">🔍 Search</button>
+      <button class="hdr-btn-d" onclick="showDesktopPanel('screen-docket')">📋 Docket</button>
+      <button class="hdr-btn-d" onclick="showDesktopPanel('screen-help')">? Help</button>
     </div>
+    <button class="hdr-about" onclick="openAbout()">About</button>
   </div>
 </header>
 
 <div id="app-body">
-  <aside id="sidebar">
-    <div class="sb-sec">
-      <span class="sb-lbl">Browse</span>
-      <div class="nav-tabs">
-        <button class="ntab on" onclick="setView('all',this)"><span class="ico">📜</span>All Documents<span class="cnt" id="c-all">—</span></button>
-        <button class="ntab" onclick="setView('overture',this)"><span class="ico">⚖️</span>Overtures<span class="cnt" id="c-ov">—</span></button>
-        <button class="ntab" onclick="setView('ga_minutes',this)"><span class="ico">📋</span>GA Minutes<span class="cnt" id="c-ga">—</span></button>
-        <button class="ntab" onclick="setView('study_committee',this)"><span class="ico">📑</span>Study Reports<span class="cnt" id="c-st">—</span></button>
-        <button class="ntab" onclick="setView('bookmarks',this)"><span class="ico">🔖</span>Bookmarks<span class="cnt" id="c-bk">0</span></button>
-      </div>
-    </div>
-    <div class="sb-sec">
-      <span class="sb-lbl">Filter &amp; Search</span>
-      <div class="filter-area">
-        <div class="filter-row">
-          <select class="fsel" id="f-year" onchange="applyFilters()"><option value="">All Years</option></select>
-          <select class="fsel" id="f-topic" onchange="applyFilters()"><option value="">All Topics</option></select>
-        </div>
-        <div class="srch-wrap">
-          <input class="srch" id="srch" type="search" placeholder="Search all documents…" oninput="onSearch(this)">
-          <button class="srch-x" id="srch-x" onclick="clearSearch()">✕</button>
-        </div>
-      </div>
-    </div>
-    <div id="result-list"></div>
-  </aside>
 
-  <main id="main-panel">
-    <div id="panel-toolbar">
-      <button class="tbtn" id="sb-toggle" onclick="toggleSidebar()">☰</button>
-      <div class="tb-title" id="tb-title">General Assembly Reference</div>
-      <button class="tbtn" id="bk-btn" onclick="toggleBk()" style="display:none">🔖 Bookmark</button>
-      <button class="tbtn" id="dkt-btn" onclick="addToDocket()" style="display:none">+ Docket</button>
+  <!-- BROWSE SCREEN -->
+  <div class="screen active" id="screen-browse">
+    <div class="browse-tabs" id="browse-tabs">
+      <button class="btab active" onclick="setView('all',this)">All <span id="c-all"></span></button>
+      <button class="btab" onclick="setView('overture',this)">Overtures <span id="c-ov"></span></button>
+      <button class="btab" onclick="setView('ga_minutes',this)">Minutes <span id="c-ga"></span></button>
+      <button class="btab" onclick="setView('study_committee',this)">Studies <span id="c-st"></span></button>
+      <button class="btab" onclick="setView('bookmarks',this)">Bookmarks <span id="c-bk">0</span></button>
     </div>
-    <div id="doc-view">
+    <div id="result-list">
       <div id="welcome"></div>
-      <div id="doc-content" style="display:none"></div>
     </div>
-  </main>
-
-  <div id="std-panel">
-    <div class="std-tabs" id="std-tabs"></div>
-    <div id="std-content"></div>
   </div>
+
+  <!-- SEARCH SCREEN -->
+  <div class="screen" id="screen-search">
+    <div class="search-bar">
+      <input class="srch-input" id="srch" type="search" placeholder="Search all documents…"
+        oninput="onSearch(this)" autocomplete="off" autocorrect="off" spellcheck="false" autocapitalize="off">
+      <button class="srch-clear" onclick="clearSearch()">✕</button>
+    </div>
+    <div class="filter-row">
+      <select class="fsel" id="f-year" onchange="runSearch()"><option value="">All Years</option></select>
+      <select class="fsel" id="f-topic" onchange="runSearch()"><option value="">All Topics</option></select>
+    </div>
+    <div id="search-results" class="no-res" style="padding:20px 16px">Enter a search term above.</div>
+  </div>
+
+  <!-- DOC VIEW SCREEN -->
+  <div class="screen" id="screen-doc">
+    <div class="doc-toolbar">
+      <button class="doc-back" onclick="goBack()">← Back</button>
+      <div class="doc-toolbar-title" id="doc-toolbar-title">Document</div>
+      <div class="doc-action-btns">
+        <button class="dac-btn" id="pdf-btn" onclick="openPDF()" style="display:none">📄 PDF</button>
+        <button class="dac-btn" id="bk-btn" onclick="toggleBk()">🔖</button>
+        <button class="dac-btn" id="dkt-btn" onclick="addToDocket()">+ Docket</button>
+      </div>
+    </div>
+    <div id="doc-scroll">
+      <div id="doc-content"></div>
+    </div>
+  </div>
+
+  <!-- DOCKET SCREEN -->
+  <div class="screen" id="screen-docket">
+    <div class="screen-header">
+      <h2>📋 My Docket</h2>
+      <p>Documents flagged for floor preparation</p>
+    </div>
+    <div id="docket-list"></div>
+  </div>
+
+  <!-- HELP SCREEN -->
+  <div class="screen" id="screen-help">
+    <div id="help-content">
+      <div class="help-hero">
+        <h1>How to Use Elder's GA Guide</h1>
+        <p>A reference tool for ruling and teaching elders preparing for the General Assembly</p>
+      </div>
+
+      <div class="help-section">
+        <h2>Getting Around</h2>
+        <div class="help-card">
+          <h3>📜 Browse</h3>
+          <p>Your main library. All GA Minutes 1973–present, overtures, and study committee reports. Tap any document to open it. Use the tabs at the top to filter by type — Overtures, Minutes, Studies, or your Bookmarks.</p>
+        </div>
+        <div class="help-card">
+          <h3>🔍 Search</h3>
+          <p>Full-text search across all 31,000+ document sections. Type any word, phrase, BCO reference (e.g. "BCO 20-4"), or commissioner name. Use the Year and Topic dropdowns to narrow results further.</p>
+        </div>
+        <div class="help-card">
+          <h3>📋 Docket</h3>
+          <p>Your personal list of documents to track during the Assembly. Open any document and tap "+ Docket" to add it. Access your docket here for quick reference on the floor.</p>
+        </div>
+        <div class="help-card">
+          <h3>? Help</h3>
+          <p>You're here. This screen explains every feature in the app.</p>
+        </div>
+      </div>
+
+      <div class="help-section">
+        <h2>Reading Documents</h2>
+        <div class="help-card">
+          <h3>Full Document View</h3>
+          <p>Tap any document in Browse or Search to open it. The full text is stitched together into one continuous scrollable page — no pagination, no Next buttons.</p>
+        </div>
+        <div class="help-card">
+          <h3>🔖 Bookmarks</h3>
+          <p>Tap the bookmark icon in the document toolbar to save any document. Bookmarked documents appear in the Bookmarks tab in Browse for quick access.</p>
+        </div>
+        <div class="help-card">
+          <h3>Personal Notes</h3>
+          <p>Every document has a notes field at the bottom. Type anything — your notes are saved automatically to your device and persist between sessions.</p>
+        </div>
+        <div class="help-card">
+          <h3>BCO and Topic Tags</h3>
+          <p>Documents are automatically tagged with the BCO chapters they reference and topic categories like worship, discipline, ordination, and missions. These tags appear in the document header and in search results.</p>
+        </div>
+      </div>
+
+      <div class="help-section">
+        <h2>Tips for GA Prep</h2>
+        <div class="help-tip">
+          <p><strong>Search by BCO section:</strong> Type "BCO 20" to find every document in the corpus that references Chapter 20 of the BCO.</p>
+        </div>
+        <div class="help-tip">
+          <p><strong>Find overture history:</strong> Search the overture topic (e.g. "creation" or "women deacons") to see how the Assembly has handled similar overtures in prior years.</p>
+        </div>
+        <div class="help-tip">
+          <p><strong>Build your docket before GA:</strong> Add every overture you need to vote on to your Docket. On the floor, open the Docket for one-tap access to any item.</p>
+        </div>
+        <div class="help-tip">
+          <p><strong>Offline use:</strong> Once loaded, this app works without an internet connection. Load it on your phone before traveling to the Assembly city.</p>
+        </div>
+        <div class="help-tip">
+          <p><strong>Install to home screen:</strong> In Safari, tap the Share button and choose "Add to Home Screen." The app opens full-screen like a native app.</p>
+        </div>
+      </div>
+
+      <div class="help-section">
+        <h2>What's in the Corpus</h2>
+        <div class="help-card">
+          <h3>GA Minutes (1973–present)</h3>
+          <p>Full text of all General Assembly minutes extracted from PDFs at pcahistory.org. Includes overtures, committee reports, recommendations, and actions taken.</p>
+        </div>
+        <div class="help-card">
+          <h3>Overtures (2019–2026)</h3>
+          <p>Structured overture text from pcaga.org and pcaac.org for recent assemblies.</p>
+        </div>
+        <div class="help-card">
+          <h3>Study Committee Reports</h3>
+          <p>Major study committee reports including the Creation Study Committee and Divorce and Remarriage report.</p>
+        </div>
+      </div>
+
+      <div class="disclaimer-box">
+        <div class="disc-lbl">Disclaimer</div>
+        <p>This application is an independent reference tool created to assist ruling and teaching elders in preparing for the General Assembly. It is not sanctioned, endorsed, or affiliated with the General Assembly, the Administrative Committee, or any official body of the Assembly. All source documents are publicly available. Users should verify any information against official sources before relying on it for Assembly business.</p>
+      </div>
+    </div>
+  </div>
+
 </div>
 
-<div id="status-bar">
-  <div class="sdot loading" id="sdot"></div>
-  <span id="stxt">Loading…</span>
-  <span class="ssep">·</span>
-  <span id="bk-status">0 bookmarks</span>
-</div>
+<!-- Bottom Nav (mobile only) -->
+<nav id="bottom-nav">
+  <button class="bnav-btn active" id="bnav-browse" onclick="showScreen('screen-browse','bnav-browse')">
+    <span class="bnav-icon">📜</span>
+    <span class="bnav-label">Browse</span>
+  </button>
+  <button class="bnav-btn" id="bnav-search" onclick="showScreen('screen-search','bnav-search');setTimeout(()=>document.getElementById('srch').focus(),200)">
+    <span class="bnav-icon">🔍</span>
+    <span class="bnav-label">Search</span>
+  </button>
+  <button class="bnav-btn" id="bnav-docket" onclick="showScreen('screen-docket','bnav-docket');renderDocket()">
+    <span class="bnav-icon">📋</span>
+    <span class="bnav-label">Docket</span>
+  </button>
+  <button class="bnav-btn" id="bnav-help" onclick="showScreen('screen-help','bnav-help')">
+    <span class="bnav-icon">?</span>
+    <span class="bnav-label">Help</span>
+  </button>
+</nav>
 
 <!-- About modal -->
 <div class="overlay" id="m-about">
   <div class="modal">
-    <div class="modal-hdr"><div class="modal-ttl">About</div><button class="modal-x" onclick="cm('m-about')">✕</button></div>
+    <div class="modal-hdr">
+      <div class="modal-ttl">About</div>
+      <button class="modal-x" onclick="cm('m-about')">✕</button>
+    </div>
     <div class="modal-body">
       <div class="about-h">Ruling and Teaching Elders<br>Helper to the General Assembly</div>
       <div class="about-rule"></div>
-      <p class="about-p">A reference tool for commissioners preparing for the General Assembly. Search and browse the full record of Assembly proceedings from 1973 to the present, alongside the Westminster Standards and constitutional documents.</p>
-      <div class="disclaimer">
-        <div class="disc-lbl">Disclaimer</div>
-        <p>This application is an independent reference tool created to assist ruling and teaching elders in preparing for the General Assembly. It is not sanctioned, endorsed, or affiliated with the General Assembly, the Administrative Committee, or any official body of the Assembly. All source documents are publicly available. Users should verify any information against official sources before relying on it for Assembly business.</p>
-      </div>
+      <p class="about-p">An independent reference tool for commissioners preparing for the General Assembly. Search and browse the full record of Assembly proceedings from 1973 to the present.</p>
       <div class="src-h">Sources</div>
       <ul class="src-ul">
         <li>GA Minutes 1973–present — pcahistory.org</li>
         <li>Overtures 2019–2026 — pcaga.org / pcaac.org</li>
         <li>Study Committee Reports — pcahistory.org</li>
-        <li>Westminster Standards — Public domain (1788 American revision of the WCF)</li>
-        <li>Book of Church Order, RAO, Preliminary Principles — pcaac.org</li>
       </ul>
+      <div style="margin-top:16px;padding:12px 14px;background:var(--cream-d);border-left:3px solid var(--gold-dim);font-family:var(--sans);font-size:11px;color:var(--slate);line-height:1.65">
+        Not sanctioned, endorsed, or affiliated with the General Assembly or any of its official bodies. Verify against official sources before relying on this app for Assembly business.
+      </div>
     </div>
-  </div>
-</div>
-
-<!-- Docket modal -->
-<div class="overlay" id="m-docket">
-  <div class="modal">
-    <div class="modal-hdr"><div class="modal-ttl">📋 My Docket</div><button class="modal-x" onclick="cm('m-docket')">✕</button></div>
-    <div class="modal-body" id="docket-body"></div>
   </div>
 </div>
 
 <script>
 // ── STATE
-let corpus=[], idx={}, filtered=[], curChunk=null, curView='all';
+let corpus=[],idx={},curView='all',curChunk=null,prevScreen='screen-browse';
 let bookmarks=JSON.parse(localStorage.getItem('ga_bk')||'[]');
 let docket=JSON.parse(localStorage.getItem('ga_dkt')||'[]');
 let notes=JSON.parse(localStorage.getItem('ga_notes')||'{}');
-let sbOpen=true, stdOpen=false, srchTimer=null;
+let srchTimer=null,stdLoaded=false,shownCount=0;
+const PAGE=60;
 
 // ── BOOT
 async function boot(){
@@ -359,7 +595,7 @@ async function boot(){
     ld('Indexing…',75);
     try{const ri=await fetch('corpus_index.json');if(ri.ok)idx=await ri.json();}catch(_){}
     ld('Ready',100);
-    await sleep(380);
+    await sleep(350);
     done();
   }catch(e){
     ld('Ready',100);
@@ -370,15 +606,50 @@ async function boot(){
 function done(noCorpus=false){
   document.getElementById('loading').classList.add('done');
   setTimeout(()=>document.getElementById('loading').style.display='none',550);
-  if(!noCorpus){buildFilters();filtered=corpus;renderList(filtered);updateCounts();}
+  if(!noCorpus){buildFilters();}
   renderWelcome(noCorpus);
-  updateStatus();
   updateBkStatus();
 }
 function ld(msg,pct){document.getElementById('ld-sub').textContent=msg;document.getElementById('ld-bar').style.width=pct+'%';}
 function sleep(ms){return new Promise(r=>setTimeout(r,ms));}
 
-// ── FILTERS
+// ── SCREEN NAV
+function showScreen(id,btnId){
+  document.querySelectorAll('.screen').forEach(s=>{
+    if(s.id!=='screen-browse'&&s.id!=='screen-doc') s.classList.remove('active');
+  });
+  const s=document.getElementById(id);
+  if(s) s.classList.add('active');
+  document.querySelectorAll('.bnav-btn').forEach(b=>b.classList.remove('active'));
+  if(btnId){const b=document.getElementById(btnId);if(b)b.classList.add('active');}
+}
+function showDesktopPanel(id){
+  const panels=['screen-search','screen-standards','screen-docket','screen-help'];
+  panels.forEach(p=>{
+    const el=document.getElementById(p);
+    if(el) el.classList.toggle('active', p===id && !el.classList.contains('active'));
+  });
+  if(id==='screen-docket') renderDocket();
+}
+function goBack(){
+  document.getElementById('screen-doc').classList.remove('active');
+  document.getElementById('screen-browse').classList.add('active');
+  document.querySelectorAll('.bnav-btn').forEach(b=>b.classList.remove('active'));
+  const bb=document.getElementById('bnav-browse');if(bb)bb.classList.add('active');
+}
+
+// ── BROWSE
+function setView(view,el){
+  curView=view;
+  document.querySelectorAll('.btab').forEach(t=>t.classList.remove('active'));
+  if(el) el.classList.add('active');
+  let src=corpus;
+  if(view==='bookmarks') src=corpus.filter(c=>bookmarks.includes(c.id));
+  else if(view!=='all') src=corpus.filter(c=>c.doc_type===view);
+  src=[...src].sort((a,b)=>(b.year||0)-(a.year||0));
+  renderList(src,document.getElementById('result-list'),true);
+}
+
 function buildFilters(){
   const years=[...new Set(corpus.map(c=>c.year).filter(Boolean))].sort();
   const sel=document.getElementById('f-year');
@@ -386,132 +657,275 @@ function buildFilters(){
   const topics=[...new Set(corpus.flatMap(c=>c.topics||[]))].sort();
   const tsel=document.getElementById('f-topic');
   topics.forEach(t=>{const o=document.createElement('option');o.value=t;o.textContent=t[0].toUpperCase()+t.slice(1);tsel.appendChild(o);});
-}
-function applyFilters(){
-  const year=document.getElementById('f-year').value;
-  const topic=document.getElementById('f-topic').value;
-  const q=document.getElementById('srch').value.trim().toLowerCase();
-  let src=corpus;
-  if(curView==='bookmarks') src=corpus.filter(c=>bookmarks.includes(c.id));
-  else if(curView!=='all') src=corpus.filter(c=>c.doc_type===curView);
-  filtered=src.filter(c=>{
-    if(year&&String(c.year)!==year)return false;
-    if(topic&&!(c.topics||[]).includes(topic))return false;
-    if(q){const h=(c.text||'').toLowerCase()+' '+(c.title||'').toLowerCase();return h.includes(q);}
-    return true;
-  });
-  renderList(filtered);
-}
-function onSearch(el){
-  document.getElementById('srch-x').classList.toggle('vis',el.value.length>0);
-  clearTimeout(srchTimer);srchTimer=setTimeout(applyFilters,300);
-}
-function clearSearch(){document.getElementById('srch').value='';document.getElementById('srch-x').classList.remove('vis');applyFilters();}
-function setView(view,el){
-  curView=view;
-  document.querySelectorAll('.ntab').forEach(t=>t.classList.remove('on'));
-  el.classList.add('on');
-  applyFilters();
+  // Update counts
+  document.getElementById('c-all').textContent='('+dedupeToDocuments(corpus).length.toLocaleString()+')';
+  document.getElementById('c-ov').textContent='('+dedupeToDocuments(corpus.filter(c=>c.doc_type==='overture')).length+')';
+  document.getElementById('c-ga').textContent='('+dedupeToDocuments(corpus.filter(c=>c.doc_type==='ga_minutes')).length.toLocaleString()+')';
+  document.getElementById('c-st').textContent='('+dedupeToDocuments(corpus.filter(c=>c.doc_type==='study_committee')).length+')';
 }
 
-// ── LIST
-function renderList(items){
-  const list=document.getElementById('result-list');
-  if(!items.length){list.innerHTML='<div class="no-res">No documents match.<br>Adjust filters or search terms.</div>';return;}
-  const shown=items.slice(0,200);
-  list.innerHTML=shown.map(c=>{
-    const active=curChunk&&curChunk.id===c.id;
-    const corpusIdx=corpus.indexOf(c);
-    const t=(c.topics||[]).slice(0,3);
+// Deduplicate chunks — one entry per unique document
+function dedupeToDocuments(items){
+  const seen=new Set();
+  const docs=[];
+  for(const c of items){
+    const key=c.doc_type+'|'+c.year+'|'+(c.ga_number||'')+'|'+(c.title||'');
+    if(!seen.has(key)){seen.add(key);docs.push(c);}
+  }
+  return docs;
+}
+
+function renderList(items,container,reset){
+  if(reset) shownCount=0;
+  const welcome=document.getElementById('welcome');
+  if(welcome) welcome.style.display='none';
+  if(!items||!items.length){
+    container.innerHTML='<div class="no-res">No documents match.<br>Try different filters or search terms.</div>';
+    return;
+  }
+  // Show one row per unique document, not per chunk
+  const allDocs=dedupeToDocuments(items);
+  const batch=allDocs.slice(shownCount,shownCount+PAGE);
+  const html=batch.map(c=>{
+    const ci=corpus.indexOf(c);
     const bk=bookmarks.includes(c.id);
-    return`<div class="ritem${active?' on':''}" onclick="openChunk(${corpusIdx})" id="ri-${c.id}">
+    const t=(c.topics||[]).slice(0,2);
+    return`<div class="ritem${curChunk&&curChunk.id===c.id?' on':''}" onclick="openChunk(${ci})">
       <div class="ri-yr">${c.year||''} · ${typeLabel(c.doc_type)}</div>
       <div class="ri-t">${esc(chunkTitle(c))}</div>
       ${chunkMeta(c)?`<div class="ri-m">${esc(chunkMeta(c))}</div>`:''}
-      ${t.length||bk?`<div class="ri-tags">${t.map(x=>`<span class="ri-tag">${x}</span>`).join('')}${bk?'<span class="ri-tag" style="background:rgba(184,151,46,.18);color:var(--gold)">🔖</span>':''}</div>`:''}
+      ${t.length||bk?`<div class="ri-tags">${t.map(x=>`<span class="ri-tag">${x}</span>`).join('')}${bk?'<span class="ri-tag" style="background:rgba(184,151,46,.2);color:var(--gold)">🔖</span>':''}</div>`:''}
     </div>`;
   }).join('');
-  if(items.length>200) list.innerHTML+=`<div class="no-res">${items.length-200} more — refine search to narrow results.</div>`;
-}
-function chunkTitle(c){
-  if(c.doc_type==='overture') return c.title||(c.overture_number?`Overture ${c.overture_number} (${c.year})`:`Overture (${c.year})`);
-  if(c.doc_type==='ga_minutes'){
-    const o=ord(c.ga_number);
-    const pt=c.total_chunks>1?` — Part ${(c.chunk_index||0)+1}/${c.total_chunks}`:'';
-    return`${o} General Assembly (${c.year})${pt}`;
+  if(reset) container.innerHTML=html;
+  else container.insertAdjacentHTML('beforeend',html.replace('<div class="no-res">',''));
+  shownCount+=batch.length;
+  // Remove old load-more
+  const old=container.querySelector('.load-more');if(old)old.remove();
+  if(shownCount<allDocs.length){
+    const btn=document.createElement('button');
+    btn.className='load-more';
+    btn.textContent='Load more ('+(allDocs.length-shownCount)+' remaining)';
+    btn.onclick=()=>{renderList(items,container,false);};
+    container.appendChild(btn);
   }
-  if(c.doc_type==='study_committee') return c.title||'Study Report';
-  return c.title||'Document';
 }
-function chunkMeta(c){
-  const p=[];
-  if(c.location) p.push(c.location);
-  if(c.moderator) p.push('Mod: '+c.moderator);
-  if((c.bco_refs||[]).length) p.push('BCO: '+c.bco_refs.slice(0,3).join(', '));
-  return p.join(' · ');
+
+// ── SEARCH
+function onSearch(el){
+  clearTimeout(srchTimer);
+  // If field is empty, reset
+  if(!el.value.trim()){
+    document.getElementById('search-results').innerHTML=
+      '<div style="padding:20px 16px;font-family:var(--sans);font-size:13px;color:#3a5068;font-style:italic">Enter a search term above.</div>';
+    return;
+  }
+  srchTimer=setTimeout(runSearch,350);
 }
-function typeLabel(t){return{ga_minutes:'Minutes',overture:'Overture',study_committee:'Study Report'}[t]||t;}
-function updateCounts(){
-  document.getElementById('c-all').textContent=corpus.length.toLocaleString();
-  document.getElementById('c-ov').textContent=corpus.filter(c=>c.doc_type==='overture').length.toLocaleString();
-  document.getElementById('c-ga').textContent=corpus.filter(c=>c.doc_type==='ga_minutes').length.toLocaleString();
-  document.getElementById('c-st').textContent=corpus.filter(c=>c.doc_type==='study_committee').length.toLocaleString();
-  updateBkStatus();
+function clearSearch(){
+  document.getElementById('srch').value='';
+  document.getElementById('search-results').innerHTML='<div style="padding:20px 16px;font-family:var(--sans);font-size:13px;color:#3a5068;font-style:italic">Enter a search term above.</div>';
+}
+// Extract a highlighted snippet around the search term
+function getSnippet(text, q, len){
+  if(!text||!q) return '';
+  const lo = text.toLowerCase();
+  const idx = lo.indexOf(q.toLowerCase());
+  if(idx < 0) return esc(text.slice(0,120))+'…';
+  const start = Math.max(0, idx - 60);
+  const end = Math.min(text.length, idx + q.length + 120);
+  let snip = (start>0?'…':'')+text.slice(start,end)+(end<text.length?'…':'');
+  // Highlight the match
+  const re = new RegExp('('+q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+')','gi');
+  return esc(snip).replace(re,'<mark style="background:#f5d67a;color:#2a1a00;padding:0 2px;border-radius:2px">$1</mark>');
+}
+
+function runSearch(){
+  const q=document.getElementById('srch').value.trim();
+  const ql=q.toLowerCase();
+  const year=document.getElementById('f-year').value;
+  const topic=document.getElementById('f-topic').value;
+  const res=document.getElementById('search-results');
+  if(!q&&!year&&!topic){
+    res.innerHTML='<div style="padding:20px 16px;font-family:var(--sans);font-size:13px;color:#3a5068;font-style:italic">Enter a search term above.</div>';
+    return;
+  }
+  // Search across all chunks, then deduplicate to best chunk per document
+  const matches=corpus.filter(c=>{
+    if(year&&String(c.year)!==year)return false;
+    if(topic&&!(c.topics||[]).includes(topic))return false;
+    if(ql){const h=(c.text||'').toLowerCase()+' '+(c.title||'').toLowerCase();return h.includes(ql);}
+    return true;
+  });
+  if(!matches.length){res.innerHTML='<div class="no-res">No results found.<br>Try different terms or broaden your search.</div>';return;}
+  // Deduplicate but keep the chunk with the best match position
+  const docMap=new Map();
+  for(const c of matches){
+    const key=c.doc_type+'|'+c.year+'|'+(c.ga_number||'')+'|'+(c.title||'');
+    if(!docMap.has(key)){
+      docMap.set(key,c);
+    } else {
+      // Prefer chunk where match appears earliest
+      const existing=docMap.get(key);
+      const eIdx=(existing.text||'').toLowerCase().indexOf(ql);
+      const cIdx=(c.text||'').toLowerCase().indexOf(ql);
+      if(cIdx>=0&&(eIdx<0||cIdx<eIdx)) docMap.set(key,c);
+    }
+  }
+  const dedupMatches=[...docMap.values()];
+  res.innerHTML='<div style="font-family:var(--sans);font-size:11px;color:#4a6080;padding:10px 16px 4px">'+
+    dedupMatches.length.toLocaleString()+' documents match</div>';
+  const shown=dedupMatches.slice(0,60);
+  shown.forEach(c=>{
+    const ci=corpus.indexOf(c);
+    const snippet=getSnippet(c.text||'',q,140);
+    const div=document.createElement('div');
+    div.className='ritem';
+    div.style.borderLeft='3px solid var(--gold)';
+    div.innerHTML=
+      '<div class="ri-yr">'+esc(String(c.year||''))+' · '+typeLabel(c.doc_type)+'</div>'+
+      '<div class="ri-t">'+esc(chunkTitle(c))+'</div>'+
+      (snippet?'<div style="font-family:var(--sans);font-size:11px;color:#8fa3c4;line-height:1.55;margin-top:5px">'+snippet+'</div>':'');
+    div.onclick=()=>{openChunk(ci);if(window.innerWidth<=768)showScreen('screen-doc','');};
+    res.appendChild(div);
+  });
+  if(dedupMatches.length>60) res.insertAdjacentHTML('beforeend',
+    '<div class="no-res">'+(dedupMatches.length-60)+' more results — refine your search.</div>');
 }
 
 // ── DOC VIEW
 function openChunk(i){
   curChunk=corpus[i];
-  document.querySelectorAll('.ritem').forEach(e=>e.classList.remove('on'));
-  const ri=document.getElementById('ri-'+curChunk.id);
-  if(ri){ri.classList.add('on');ri.scrollIntoView({block:'nearest'});}
-  document.getElementById('welcome').style.display='none';
-  document.getElementById('doc-content').style.display='block';
-  document.getElementById('tb-title').textContent=chunkTitle(curChunk);
-  document.getElementById('bk-btn').style.display='';
-  document.getElementById('dkt-btn').style.display='';
-  updateBkBtn();
   const c=curChunk;
-  const sibs=corpus.filter(s=>s.doc_type===c.doc_type&&s.year===c.year&&s.ga_number===c.ga_number&&s.title===c.title);
-  const si=sibs.indexOf(c);
-  const hasPrev=si>0, hasNext=si<sibs.length-1;
-  const bcoT=(c.bco_chapters||[]).map(ch=>`<span class="tag bco">${esc(ch)}</span>`).join('');
-  const topT=(c.topics||[]).map(t=>`<span class="tag topic">${t}</span>`).join('');
-  const savedNote=notes[c.id]||'';
-  document.getElementById('doc-content').innerHTML=`
+  // Stitch all sibling chunks into one document
+  const sibs=corpus.filter(s=>s.doc_type===c.doc_type&&s.year===c.year&&s.ga_number===c.ga_number&&s.title===c.title)
+    .sort((a,b)=>(a.chunk_index||0)-(b.chunk_index||0));
+  const first=sibs[0]||c;
+  const fullText=sibs.map(s=>s.text||'').join('\n\n');
+  const allBco=[...new Set(sibs.flatMap(s=>s.bco_chapters||[]))];
+  const allTopics=[...new Set(sibs.flatMap(s=>s.topics||[]))];
+  const bcoT=allBco.map(ch=>`<span class="tag bco" style="cursor:pointer" onclick="tagSearch('${esc(ch)}')" title="Search for ${esc(ch)}">${esc(ch)}</span>`).join('');
+  const topT=allTopics.map(t=>`<span class="tag topic" style="cursor:pointer" onclick="tagSearch('${t}')" title="Search for ${t}">${t}</span>`).join('');
+  const savedNote=notes[first.id]||'';
+
+  document.getElementById('doc-toolbar-title').textContent=chunkTitle(first);
+  updateBkBtn();
+  updatePDFBtn();
+  document.getElementById('dkt-btn').textContent='+ Docket';
+
+  const pdfUrl = curChunk && curChunk.doc_type==='ga_minutes' ? GA_PDF_URLS[curChunk.ga_number] : null;
+  const pdfBanner = pdfUrl ? `<div class="pdf-banner">
+    <span>📄 Original formatted PDF available from pcahistory.org</span>
+    <button class="pdf-banner-btn" onclick="window.open('${pdfUrl}','_blank')">View Original PDF →</button>
+  </div>` : '';
+  document.getElementById('doc-content').innerHTML=pdfBanner+`
     <div class="doc-hdr">
-      <div class="doc-eye">${typeLabel(c.doc_type)} · ${c.year||''} ${c.era?'· '+c.era:''}</div>
-      <div class="doc-title">${esc(chunkTitle(c))}</div>
+      <div class="doc-eye">${typeLabel(first.doc_type)} · ${first.year||''} ${first.era?'· '+first.era:''}</div>
+      <div class="doc-title">${esc(chunkTitle(first))}</div>
       <div class="doc-metas">
-        ${c.location?`<div class="doc-meta"><strong>Location:</strong> ${esc(c.location)}</div>`:''}
-        ${c.moderator?`<div class="doc-meta"><strong>Moderator:</strong> ${esc(c.moderator)}</div>`:''}
-        ${c.source?`<div class="doc-meta"><strong>Source:</strong> ${esc(c.source)}</div>`:''}
+        ${first.location?`<div class="doc-meta"><strong>Location:</strong> ${esc(first.location)}</div>`:''}
+        ${first.moderator?`<div class="doc-meta"><strong>Moderator:</strong> ${esc(first.moderator)}</div>`:''}
+        ${first.source?`<div class="doc-meta"><strong>Source:</strong> ${esc(first.source)}</div>`:''}
+        ${sibs.length>1?`<div class="doc-meta"><strong>Length:</strong> ${sibs.length} sections</div>`:''}
       </div>
       ${bcoT||topT?`<div class="tag-row">${bcoT}${topT}</div>`:''}
     </div>
-    <div class="doc-body">${fmtText(c.text||'')}</div>
-    ${sibs.length>1?`<div class="chunk-nav">
-      <button class="cnbtn" onclick="openChunk(${corpus.indexOf(sibs[si-1])})" ${!hasPrev?'disabled':''}>← Previous</button>
-      <span>Section ${si+1} of ${sibs.length}</span>
-      <button class="cnbtn" onclick="openChunk(${corpus.indexOf(sibs[si+1])})" ${!hasNext?'disabled':''}>Next →</button>
-    </div>`:''}
+    <div class="doc-body">${fmtText(fullText)}</div>
     <div class="notes-wrap">
       <span class="notes-lbl">Personal Notes</span>
       <textarea class="notes-ta" id="notes-field" placeholder="Add your notes on this document…" oninput="saveNote()">${esc(savedNote)}</textarea>
       <div class="notes-saved" id="notes-saved">Saved</div>
     </div>`;
-  if(stdOpen) toggleStd();
-  if(window.innerWidth<=768) document.getElementById('sidebar').classList.add('collapsed');
-  updateStatus();
+
+  document.getElementById('doc-scroll').scrollTop=0;
+  // Navigate to doc screen on mobile
+  if(window.innerWidth<=768){
+    showScreen('screen-doc','');
+  }
 }
+
 function fmtText(t){
-  if(!t) return'';
-  return esc(t).split(/\n\n+/).map(p=>`<p>${p.replace(/\n/g,'<br>')}</p>`).join('');
+  if(!t) return '';
+
+  // ── STEP 1: Fix OCR artifacts
+  t = t
+    .replace(/\f/g,'\n\n')                        // form feeds → paragraph break
+    .replace(/\r\n/g,'\n')
+    .replace(/([a-z])- *\n([a-z])/g,'$1$2')       // fix hyphenated line breaks: "Pres-\nbyterial" → "Presbyterian"
+    .replace(/([A-Za-z]) {2,}([a-z])/g,'$1$2')    // fix OCR spaces mid-word: "Continuin g" → "Continuing"
+    .replace(/\.{5,}/g,'')                         // dot leaders
+    .replace(/_{4,}/g,'')                           // underscore rules
+    .replace(/\t/g,' ')
+    .replace(/[ ]{3,}/g,'  ')                       // normalize spaces
+    .replace(/^\s*\d{1,4}\s*$/gm,'')              // lone page numbers
+    .replace(/\n{4,}/g,'\n\n\n');                  // max 3 newlines
+
+  // ── STEP 2: Split into blocks
+  const blocks = t.split(/\n\n+/);
+  const out = [];
+
+  for(let block of blocks){
+    block = block.trim();
+    if(!block) continue;
+
+    const lines = block.split('\n').map(l=>l.trim()).filter(Boolean);
+    if(!lines.length) continue;
+    const first = lines[0];
+    const allText = lines.join(' ');
+
+    // ── Numbered section heading: "1. Opening Worship" or "SECTION 4."
+    if(/^\d{1,2}\.\s+[A-Z]/.test(first) && lines.length <= 3){
+      out.push('<div class="doc-section-h">'+esc(allText)+'</div>');
+      continue;
+    }
+
+    // ── ALL CAPS short heading
+    if(/^[A-Z][A-Z\s\-,\.]{6,}$/.test(first) && first.length < 80 && lines.length <= 2){
+      // Soften to title case
+      const titled = first.split(' ').map(w=>w.length>3?w[0]+w.slice(1).toLowerCase():w.toLowerCase()).join(' ');
+      out.push('<h3>'+esc(titled)+'</h3>');
+      continue;
+    }
+
+    // ── Table detection: 3+ lines where each has 2+ columns of data separated by spaces
+    const looksTabular = lines.length >= 3 && lines.filter(l=>{
+      const parts = l.split(/\s{2,}/);
+      return parts.length >= 2 && parts[0].length > 2;
+    }).length >= lines.length * 0.6;
+
+    if(looksTabular){
+      out.push('<div class="doc-table">');
+      for(const line of lines){
+        const cols = line.split(/\s{2,}/).filter(Boolean);
+        if(cols.length >= 2){
+          out.push('<div class="doc-table-row">'+cols.map(c=>'<span class="doc-table-cell">'+esc(c)+'</span>').join('')+'</div>');
+        } else {
+          out.push('<div class="doc-table-row"><span class="doc-table-cell" style="grid-column:1/-1">'+esc(line)+'</span></div>');
+        }
+      }
+      out.push('</div>');
+      continue;
+    }
+
+    // ── Resolution/Overture format: "WHEREAS" / "RESOLVED"
+    if(/^WHEREAS|^RESOLVED|^BE IT|^THEREFORE/i.test(first)){
+      out.push('<div class="doc-resolution">'+esc(allText).replace(/\n/g,'<br>')+'</div>');
+      continue;
+    }
+
+    // ── Regular paragraph
+    out.push('<p>'+esc(allText).replace(/\n/g,' ')+'</p>');
+  }
+
+  return out.join('\n');
 }
 let ntimer;
 function saveNote(){
-  const v=document.getElementById('notes-field').value;
-  notes[curChunk.id]=v;
+  const v=document.getElementById('notes-field')?.value;
+  if(!curChunk||v===undefined)return;
+  const sibs=corpus.filter(s=>s.doc_type===curChunk.doc_type&&s.year===curChunk.year&&s.ga_number===curChunk.ga_number&&s.title===curChunk.title);
+  const first=sibs[0]||curChunk;
+  notes[first.id]=v;
   clearTimeout(ntimer);
   ntimer=setTimeout(()=>{
     localStorage.setItem('ga_notes',JSON.stringify(notes));
@@ -523,81 +937,88 @@ function saveNote(){
 // ── BOOKMARKS
 function toggleBk(){
   if(!curChunk)return;
-  const id=curChunk.id;
+  const sibs=corpus.filter(s=>s.doc_type===curChunk.doc_type&&s.year===curChunk.year&&s.ga_number===curChunk.ga_number&&s.title===curChunk.title);
+  const id=(sibs[0]||curChunk).id;
   if(bookmarks.includes(id)) bookmarks=bookmarks.filter(b=>b!==id);
   else bookmarks.push(id);
   localStorage.setItem('ga_bk',JSON.stringify(bookmarks));
   updateBkBtn();updateBkStatus();
-  if(curView==='bookmarks') applyFilters();
 }
 function updateBkBtn(){
   if(!curChunk)return;
-  const isB=bookmarks.includes(curChunk.id);
+  const sibs=corpus.filter(s=>s.doc_type===curChunk.doc_type&&s.year===curChunk.year&&s.ga_number===curChunk.ga_number&&s.title===curChunk.title);
+  const id=(sibs[0]||curChunk).id;
+  const isB=bookmarks.includes(id);
   const btn=document.getElementById('bk-btn');
-  btn.textContent=isB?'🔖 Bookmarked':'🔖 Bookmark';
-  btn.classList.toggle('bkd',isB);
+  if(btn){btn.textContent=isB?'🔖':'🔖';btn.classList.toggle('bkd',isB);}
 }
 function updateBkStatus(){
   const n=bookmarks.length;
-  document.getElementById('bk-status').textContent=`${n} bookmark${n!==1?'s':''}`;
-  document.getElementById('c-bk').textContent=n;
+  document.getElementById('c-bk').textContent='('+n+')';
 }
 
 // ── DOCKET
 function addToDocket(){
   if(!curChunk)return;
-  const id=curChunk.id;
+  const sibs=corpus.filter(s=>s.doc_type===curChunk.doc_type&&s.year===curChunk.year&&s.ga_number===curChunk.ga_number&&s.title===curChunk.title);
+  const first=sibs[0]||curChunk;
+  const id=first.id;
   if(!docket.find(d=>d.id===id)){
-    docket.push({id,title:chunkTitle(curChunk),year:curChunk.year});
+    docket.push({id,title:chunkTitle(first),year:first.year});
     localStorage.setItem('ga_dkt',JSON.stringify(docket));
   }
-  document.getElementById('dkt-btn').textContent='✓ In Docket';
+  document.getElementById('dkt-btn').textContent='✓ Added';
 }
-function openDocket(){
-  const body=document.getElementById('docket-body');
-  if(!docket.length){body.innerHTML='<div class="empty-dkt">Your docket is empty.<br>Open a document and click "+ Docket".</div>';}
-  else{body.innerHTML=docket.map((d,i)=>`
+function renderDocket(){
+  const list=document.getElementById('docket-list');
+  if(!docket.length){
+    list.innerHTML='<div class="empty-dkt">Your docket is empty.<br><br>Open any document and tap<br>"+ Docket" to add it here.</div>';
+    return;
+  }
+  list.innerHTML=docket.map((d,i)=>`
     <div class="docket-item">
-      <div class="dkt-info"><div class="dkt-yr">${d.year||''}</div><div class="dkt-t">${esc(d.title)}</div></div>
-      <button class="dkt-open" onclick="openFromDocket('${d.id}');cm('m-docket')">Open</button>
+      <div class="dkt-info">
+        <div class="dkt-yr">${d.year||''}</div>
+        <div class="dkt-t">${esc(d.title)}</div>
+      </div>
+      <button class="dkt-open" onclick="openFromDocket('${d.id}')">Open</button>
       <button class="dkt-rm" onclick="rmDocket(${i})">✕</button>
-    </div>`).join('');}
-  om('m-docket');
+    </div>`).join('');
 }
-function rmDocket(i){docket.splice(i,1);localStorage.setItem('ga_dkt',JSON.stringify(docket));openDocket();}
-function openFromDocket(id){const i=corpus.findIndex(c=>c.id===id);if(i>=0)openChunk(i);}
+function rmDocket(i){docket.splice(i,1);localStorage.setItem('ga_dkt',JSON.stringify(docket));renderDocket();}
+function openFromDocket(id){
+  const i=corpus.findIndex(c=>c.id===id);
+  if(i>=0){openChunk(i);showScreen('screen-doc','');
+    document.querySelectorAll('.bnav-btn').forEach(b=>b.classList.remove('active'));}
+}
 
-// ── SIDEBAR
-function toggleSidebar(){sbOpen=!sbOpen;document.getElementById('sidebar').classList.toggle('collapsed',!sbOpen);}
-
-// ── STANDARDS
-const STDS={
-  wcf:{label:'Westminster Confession of Faith (1788)',sub:'American Presbyterian Revision'},
-  wlc:{label:'Westminster Larger Catechism',sub:'1647'},
-  wsc:{label:'Westminster Shorter Catechism',sub:'1647'},
-  bco:{label:'Book of Church Order',sub:'Current edition — pcaac.org'},
-};
-function toggleStd(){
-  stdOpen=!stdOpen;
-  document.getElementById('std-panel').classList.toggle('vis',stdOpen);
-  document.getElementById('main-panel').style.display=stdOpen?'none':'';
-  document.getElementById('std-btn').classList.toggle('on',stdOpen);
-  if(stdOpen) renderStd('wcf');
-}
-function renderStd(key){
-  const tabs=document.getElementById('std-tabs');
-  tabs.innerHTML=Object.entries(STDS).map(([k,v])=>`<button class="stab${k===key?' on':''}" onclick="renderStd('${k}')">${v.label.split(' ').slice(0,3).join(' ')}</button>`).join('');
-  const content=document.getElementById('std-content');
-  const s=STDS[key];
-  content.innerHTML=`<div class="std-dtitle">${esc(s.label)}</div><div class="std-dsub">${esc(s.sub)}</div><div class="std-rule"></div>${getStdContent(key)}`;
-  content.scrollTop=0;
-}
-function getStdContent(key){
-  if(key==='wcf') return getWCF();
-  if(key==='wlc') return getWLC();
-  if(key==='wsc') return getWSC();
-  if(key==='bco') return getBCO();
-  return'';
+// ── WELCOME
+function renderWelcome(noCorpus){
+  const el=document.getElementById('welcome');
+  const list=document.getElementById('result-list');
+  if(noCorpus){
+    list.innerHTML=`<div style="padding:32px 20px;text-align:center">
+      <div style="font-size:20px;color:var(--cream);margin-bottom:12px">Corpus Not Found</div>
+      <div style="width:36px;height:2px;background:var(--gold);margin:0 auto 14px"></div>
+      <p style="font-family:var(--sans);font-size:13px;color:#5a7898;line-height:1.7">
+        Place <strong style="color:var(--cream-d)">corpus_final.json</strong> and <strong style="color:var(--cream-d)">corpus_index.json</strong> in the same folder as this app, then reload.
+      </p></div>`;
+    return;
+  }
+  const years=idx.years_available||[];
+  const minY=years[0]||1973,maxY=years[years.length-1]||2025;
+  el.style.display='flex';
+  el.innerHTML=`
+    <img src="icon-192.png" alt="Elder's GA Guide" style="width:80px;height:80px;border-radius:8px;border:2px solid rgba(184,151,46,.4);margin-bottom:16px;display:block">
+    <div class="w-h">Elder's GA Guide</div>
+    <div class="w-rule"></div>
+    <div class="w-p">Full General Assembly record ${minY}–${maxY}. Search and browse all overtures, minutes, and study reports. Tap a tab above to browse, or use Search.</div>
+    <div class="w-stats">
+      <div class="stat"><div class="stat-n">${corpus.length.toLocaleString()}</div><div class="stat-l">Docs</div></div>
+      <div class="stat"><div class="stat-n">${years.length}</div><div class="stat-l">GAs</div></div>
+      <div class="stat"><div class="stat-n">${corpus.filter(c=>c.doc_type==='overture').length}</div><div class="stat-l">Overtures</div></div>
+    </div>
+    <button class="w-start-btn" onclick="setView('all',document.querySelector('.btab'))">Browse Documents →</button>`;
 }
 
 // ── MODALS
@@ -606,154 +1027,111 @@ function cm(id){document.getElementById(id).classList.remove('open');}
 function openAbout(){om('m-about');}
 document.querySelectorAll('.overlay').forEach(el=>el.addEventListener('click',e=>{if(e.target===el)el.classList.remove('open');}));
 
-// ── WELCOME
-function renderWelcome(noCorpus){
-  const el=document.getElementById('welcome');
-  if(noCorpus){
-    el.innerHTML=`<div class="w-h">Corpus Not Found</div><div class="w-rule"></div>
-    <div class="w-p">Place <strong>corpus_final.json</strong> and <strong>corpus_index.json</strong> in the same folder as this file, then reload.</div>`;
-    updateStatus('No corpus loaded',true);return;
-  }
-  const years=idx.years_available||[];
-  const minY=years[0]||1973,maxY=years[years.length-1]||2025;
-  el.innerHTML=`<div class="w-h">Elder's GA Guide</div><div class="w-rule"></div>
-  <div class="w-p">Full record of General Assembly proceedings ${minY}–${maxY}, Westminster Standards (1788 WCF), and constitutional documents. Select a document in the left panel to begin.</div>
-  <div class="w-stats">
-    <div class="stat"><div class="stat-n">${corpus.length.toLocaleString()}</div><div class="stat-l">Documents</div></div>
-    <div class="stat"><div class="stat-n">${years.length}</div><div class="stat-l">Assemblies</div></div>
-    <div class="stat"><div class="stat-n">${corpus.filter(c=>c.doc_type==='overture').length}</div><div class="stat-l">Overtures</div></div>
-  </div>
-  <div class="w-note"><strong>Tip:</strong> Search for BCO sections (e.g. "BCO 20-4"), overture topics, or commissioner names. Filter by year or topic using the dropdowns. Bookmark documents for quick floor reference.</div>`;
+// Tag click — jump to search with that term
+function tagSearch(term){
+  document.getElementById('srch').value=term;
+  showScreen('screen-search','bnav-search');
+  runSearch();
 }
 
-// ── STATUS
-function updateStatus(msg,warn){
-  const dot=document.getElementById('sdot'),txt=document.getElementById('stxt');
-  dot.classList.remove('loading','warn');
-  if(warn){dot.classList.add('warn');}
-  if(msg){txt.textContent=msg;return;}
-  if(!corpus.length){dot.classList.add('warn');txt.textContent='No corpus loaded';return;}
-  const years=idx.years_available||[];
-  txt.textContent=`${corpus.length.toLocaleString()} documents · ${years[0]||1973}–${years[years.length-1]||2025}`;
+// ── PDF VIEWER
+// Maps GA number to pcahistory.org PDF URL
+const GA_PDF_URLS = {
+  1:'https://www.pcahistory.org/pca/ga/1st_pcaga_1973.pdf',
+  2:'https://www.pcahistory.org/pca/ga/2nd_pcaga_1974.pdf',
+  3:'https://www.pcahistory.org/pca/ga/3rd_pcaga_1975.pdf',
+  4:'https://www.pcahistory.org/pca/ga/4th_pcaga_1976.pdf',
+  5:'https://www.pcahistory.org/pca/ga/5th_pcaga_1977.pdf',
+  6:'https://www.pcahistory.org/pca/ga/6th_pcaga_1978.pdf',
+  7:'https://www.pcahistory.org/pca/ga/7th_pcaga_1979.pdf',
+  8:'https://www.pcahistory.org/pca/ga/8th_pcaga_1980.pdf',
+  9:'https://www.pcahistory.org/pca/ga/9th_pcaga_1981.pdf',
+  10:'https://www.pcahistory.org/pca/ga/10th_pcaga_1982.pdf',
+  11:'https://www.pcahistory.org/pca/ga/11th_pcaga_1983.pdf',
+  12:'https://www.pcahistory.org/pca/ga/12th_pcaga_1984.pdf',
+  13:'https://www.pcahistory.org/pca/ga/13th_pcaga_1985.pdf',
+  14:'https://www.pcahistory.org/pca/ga/14th_pcaga_1986.pdf',
+  15:'https://www.pcahistory.org/pca/ga/15th_pcaga_1987.pdf',
+  16:'https://www.pcahistory.org/pca/ga/16th_pcaga_1988.pdf',
+  17:'https://www.pcahistory.org/pca/ga/17th_pcaga_1989.pdf',
+  18:'https://www.pcahistory.org/pca/ga/18th_pcaga_1990.pdf',
+  19:'https://www.pcahistory.org/pca/ga/19th_pcaga_1991.pdf',
+  20:'https://www.pcahistory.org/pca/ga/20th_pcaga_1992.pdf',
+  21:'https://www.pcahistory.org/pca/ga/21st_pcaga_1993.pdf',
+  22:'https://www.pcahistory.org/pca/ga/22nd_pcaga_1994.pdf',
+  23:'https://www.pcahistory.org/pca/ga/23rd_pcaga_1995.pdf',
+  24:'https://www.pcahistory.org/pca/ga/24th_pcaga_1996.pdf',
+  25:'https://www.pcahistory.org/pca/ga/25th_pcaga_1997.pdf',
+  26:'https://www.pcahistory.org/pca/ga/26th_pcaga_1998.pdf',
+  27:'https://www.pcahistory.org/pca/ga/27th_pcaga_1999.pdf',
+  28:'https://www.pcahistory.org/pca/ga/28th_pcaga_2000.pdf',
+  29:'https://www.pcahistory.org/pca/ga/29th_pcaga_2001.pdf',
+  30:'https://www.pcahistory.org/pca/ga/30th_pcaga_2002.pdf',
+  31:'https://www.pcahistory.org/pca/ga/31st_pcaga_2003.pdf',
+  32:'https://www.pcahistory.org/pca/ga/32nd_pcaga_2004.pdf',
+  33:'https://www.pcahistory.org/pca/ga/33rd_pcaga_2005.pdf',
+  34:'https://www.pcahistory.org/pca/ga/34th_pcaga_2006.pdf',
+  35:'https://www.pcahistory.org/pca/ga/35th_pcaga_2007.pdf',
+  36:'https://www.pcahistory.org/pca/ga/36th_pcaga_2008.pdf',
+  37:'https://www.pcahistory.org/pca/ga/37th_pcaga_2009.pdf',
+  38:'https://www.pcahistory.org/pca/ga/38th_pcaga_2010.pdf',
+  39:'https://www.pcahistory.org/pca/ga/39th_pcaga_2011.pdf',
+  40:'https://www.pcahistory.org/pca/ga/40th_pcaga_2012.pdf',
+  41:'https://www.pcahistory.org/pca/ga/41st_pcaga_2013.pdf',
+  42:'https://www.pcahistory.org/pca/ga/42nd_pcaga_2014.pdf',
+  43:'https://www.pcahistory.org/pca/ga/43rd_pcaga_2015.pdf',
+  44:'https://www.pcahistory.org/pca/ga/44th_pcaga_2016.pdf',
+  45:'https://www.pcahistory.org/pca/ga/45th_pcaga_2017.pdf',
+  46:'https://www.pcahistory.org/pca/ga/46th_pcaga_2018.pdf',
+  47:'https://www.pcahistory.org/pca/ga/47th_pcaga_2019.pdf',
+  48:'https://www.pcahistory.org/pca/ga/48th_pcaga_2021.pdf',
+  49:'https://www.pcahistory.org/pca/ga/49th_pcaga_2022.pdf',
+  50:'https://www.pcahistory.org/pca/ga/50th_pcaga_2023.pdf',
+  51:'https://www.pcahistory.org/pca/ga/51st_pcaga_2024.pdf',
+  52:'https://www.pcahistory.org/pca/ga/52nd_pcaga_2025.pdf',
+};
+
+function openPDF(){
+  if(!curChunk) return;
+  const url = GA_PDF_URLS[curChunk.ga_number];
+  if(url) window.open(url,'_blank');
+}
+
+function updatePDFBtn(){
+  const btn = document.getElementById('pdf-btn');
+  if(!btn) return;
+  if(curChunk && curChunk.doc_type==='ga_minutes' && GA_PDF_URLS[curChunk.ga_number]){
+    btn.style.display='';
+  } else {
+    btn.style.display='none';
+  }
 }
 
 // ── UTILITIES
 function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 function ord(n){if(!n)return'';const s=['th','st','nd','rd'],v=n%100;return n+(s[(v-20)%10]||s[v]||s[0]);}
-
-// ── WESTMINSTER CONFESSION OF FAITH (1788) — Selected chapters
-function getWCF(){return`
-<div class="std-ch"><div class="std-ch-h">Chapter I — Of the Holy Scripture</div>
-<div class="std-art"><div class="std-art-n">I.</div><div class="std-art-t">Although the light of nature, and the works of creation and providence, do so far manifest the goodness, wisdom, and power of God, as to leave men inexcusable; yet are they not sufficient to give that knowledge of God, and of his will, which is necessary unto salvation; therefore it pleased the Lord, at sundry times, and in divers manners, to reveal himself, and to declare that his will unto his Church; and afterwards for the better preserving and propagating of the truth, and for the more sure establishment and comfort of the Church against the corruption of the flesh, and the malice of Satan and of the world, to commit the same wholly unto writing; which maketh the holy Scripture to be most necessary; those former ways of God's revealing his will unto his people being now ceased.</div></div>
-<div class="std-art"><div class="std-art-n">II.</div><div class="std-art-t">Under the name of holy Scripture, or the Word of God written, are now contained all the Books of the Old and New Testaments, which are these — Of the Old Testament: Genesis, Exodus, Leviticus, Numbers, Deuteronomy, Joshua, Judges, Ruth, I Samuel, II Samuel, I Kings, II Kings, I Chronicles, II Chronicles, Ezra, Nehemiah, Esther, Job, Psalms, Proverbs, Ecclesiastes, The Song of Songs, Isaiah, Jeremiah, Lamentations, Ezekiel, Daniel, Hosea, Joel, Amos, Obadiah, Jonah, Micah, Nahum, Habakkuk, Zephaniah, Haggai, Zechariah, Malachi. Of the New Testament: Matthew, Mark, Luke, John, The Acts of the Apostles, Romans, I Corinthians, II Corinthians, Galatians, Ephesians, Philippians, Colossians, I Thessalonians, II Thessalonians, I Timothy, II Timothy, Titus, Philemon, Hebrews, James, I Peter, II Peter, I John, II John, III John, Jude, Revelation. All which are given by inspiration of God, to be the rule of faith and life.</div></div>
-<div class="std-art"><div class="std-art-n">IV.</div><div class="std-art-t">The authority of the holy Scripture, for which it ought to be believed and obeyed, dependeth not upon the testimony of any man or church, but wholly upon God (who is truth itself), the Author thereof; and therefore it is to be received, because it is the Word of God.</div></div>
-<div class="std-art"><div class="std-art-n">VI.</div><div class="std-art-t">The whole counsel of God, concerning all things necessary for his own glory, man's salvation, faith, and life, is either expressly set down in Scripture, or by good and necessary consequence may be deduced from Scripture: unto which nothing at any time is to be added, whether by new revelations of the Spirit, or traditions of men.</div></div>
-<div class="std-art"><div class="std-art-n">IX.</div><div class="std-art-t">The infallible rule of interpretation of Scripture is the Scripture itself; and therefore, when there is a question about the true and full sense of any Scripture (which is not manifold, but one), it must be searched and known by other places that speak more clearly.</div></div></div>
-
-<div class="std-ch"><div class="std-ch-h">Chapter II — Of God, and of the Holy Trinity</div>
-<div class="std-art"><div class="std-art-n">I.</div><div class="std-art-t">There is but one only living and true God, who is infinite in being and perfection, a most pure spirit, invisible, without body, parts, or passions, immutable, immense, eternal, incomprehensible, almighty, most wise, most holy, most free, most absolute, working all things according to the counsel of his own immutable and most righteous will, for his own glory; most loving, gracious, merciful, long-suffering, abundant in goodness and truth, forgiving iniquity, transgression, and sin; the rewarder of them that diligently seek him; and withal most just and terrible in his judgments; hating all sin, and who will by no means clear the guilty.</div></div>
-<div class="std-art"><div class="std-art-n">III.</div><div class="std-art-t">In the unity of the Godhead there be three Persons of one substance, power, and eternity: God the Father, God the Son, and God the Holy Ghost. The Father is of none, neither begotten nor proceeding; the Son is eternally begotten of the Father; the Holy Ghost eternally proceeding from the Father and the Son.</div></div></div>
-
-<div class="std-ch"><div class="std-ch-h">Chapter III — Of God's Eternal Decree</div>
-<div class="std-art"><div class="std-art-n">I.</div><div class="std-art-t">God from all eternity did by the most wise and holy counsel of his own will, freely and unchangeably ordain whatsoever comes to pass; yet so as thereby neither is God the author of sin; nor is violence offered to the will of the creatures, nor is the liberty or contingency of second causes taken away, but rather established.</div></div></div>
-
-<div class="std-ch"><div class="std-ch-h">Chapter XXI — Of Religious Worship and the Sabbath Day</div>
-<div class="std-art"><div class="std-art-n">I.</div><div class="std-art-t">The light of nature showeth that there is a God, who hath lordship and sovereignty over all; is good, and doeth good unto all; and is therefore to be feared, loved, praised, called upon, trusted in, and served with all the heart, and with all the soul, and with all the might. But the acceptable way of worshipping the true God is instituted by himself, and so limited by his own revealed will, that he may not be worshipped according to the imaginations and devices of men, or the suggestions of Satan, under any visible representations, or any other way not prescribed in the holy Scripture.</div></div>
-<div class="std-art"><div class="std-art-n">VII.</div><div class="std-art-t">As it is the law of nature, that, in general, a due proportion of time be set apart for the worship of God; so, in his Word, by a positive, moral, and perpetual commandment, binding all men in all ages, he hath particularly appointed one day in seven for a Sabbath, to be kept holy unto him: which, from the beginning of the world to the resurrection of Christ, was the last day of the week; and, from the resurrection of Christ, was changed into the first day of the week, which in Scripture is called the Lord's Day, and is to be continued to the end of the world as the Christian Sabbath.</div></div></div>
-
-<div class="std-ch"><div class="std-ch-h">Chapter XXIII — Of the Civil Magistrate (1788 American Revision)</div>
-<div class="std-art"><div class="std-art-n">I.</div><div class="std-art-t">God, the Supreme Lord and King of all the world, hath ordained civil magistrates to be under him over the people, for his own glory and the public good; and to this end, hath armed them with the power of the sword, for the defense and encouragement of them that are good, and for the punishment of evil-doers.</div></div>
-<div class="std-art"><div class="std-art-n">III.</div><div class="std-art-t">Civil magistrates may not assume to themselves the administration of the Word and Sacraments; or the power of the keys of the kingdom of heaven; or, in the least, interfere in matters of faith. Yet as nursing fathers, it is the duty of civil magistrates to protect the Church of our common Lord, without giving the preference to any denomination of Christians above the rest, in such a manner that all ecclesiastical persons whatever shall enjoy the full, free, and unquestioned liberty of discharging every part of their sacred functions, without violence or danger. And, as Jesus Christ hath appointed a regular government and discipline in his Church, no law of any commonwealth should interfere with, let, or hinder, the due exercise thereof, among the voluntary members of any denomination of Christians, according to their own profession and belief.</div></div></div>
-
-<div class="std-ch"><div class="std-ch-h">Chapter XXV — Of the Church</div>
-<div class="std-art"><div class="std-art-n">I.</div><div class="std-art-t">The catholic or universal Church, which is invisible, consists of the whole number of the elect, that have been, are, or shall be gathered into one, under Christ the head thereof; and is the spouse, the body, the fullness of him that filleth all in all.</div></div>
-<div class="std-art"><div class="std-art-n">II.</div><div class="std-art-t">The visible Church, which is also catholic or universal under the gospel (not confined to one nation as before under the law), consists of all those throughout the world that profess the true religion, and of their children; and is the kingdom of the Lord Jesus Christ, the house and family of God, out of which there is no ordinary possibility of salvation.</div></div></div>
-
-<div class="std-ch"><div class="std-ch-h">Chapter XXXI — Of Synods and Councils (1788 American Revision)</div>
-<div class="std-art"><div class="std-art-n">I.</div><div class="std-art-t">For the better government and further edification of the Church, there ought to be such assemblies as are commonly called synods or councils.</div></div>
-<div class="std-art"><div class="std-art-n">II.</div><div class="std-art-t">As magistrates may lawfully call a synod of ministers and other fit persons, to consult and advise with about matters of religion; so, if magistrates be open enemies to the Church, the ministers of Christ, of themselves, by virtue of their office, or they, with other fit persons upon delegation from their churches, may meet together in such assemblies.</div></div>
-<div class="std-art"><div class="std-art-n">III.</div><div class="std-art-t">It belongeth to synods and councils, ministerially to determine controversies of faith, and cases of conscience; to set down rules and directions for the better ordering of the public worship of God, and government of his Church; to receive complaints in cases of mal-administration, and authoritatively to determine the same: which decrees and determinations, if consonant to the Word of God, are to be received with reverence and submission, not only for their agreement with the Word, but also for the power whereby they are made, as being an ordinance of God, appointed thereunto in his Word.</div></div>
-<div class="std-art"><div class="std-art-n">IV.</div><div class="std-art-t">All synods or councils since the apostles' times, whether general or particular, may err, and many have erred; therefore they are not to be made the rule of faith or practice, but to be used as a help in both.</div></div></div>
-
-<div class="std-ch"><div class="std-ch-h">Note on the 1788 American Revision</div>
-<div class="std-art"><div class="std-art-n"></div><div class="std-art-t">The American Presbyterian Church revised the Westminster Confession in 1788, most significantly in Chapters XXIII (Civil Magistrate) and XXXI (Synods and Councils). The revisions removed provisions granting civil magistrates authority over church assemblies and religious controversy — reflecting the American context of church-state separation under the First Amendment. The Presbyterian Church in America holds to this 1788 revision as its confessional standard. The catechisms (WLC and WSC) were not substantively revised, though minor changes were made to WSC Q&amp;A 109.</div></div></div>
-`;}
-
-// ── WESTMINSTER LARGER CATECHISM (selected)
-function getWLC(){return`
-<div class="std-ch"><div class="std-ch-h">Of God and Holy Scripture</div>
-<div class="std-art"><div class="std-art-n">Q. 1.</div><div class="std-art-t">What is the chief and highest end of man? <strong>A.</strong> Man's chief and highest end is to glorify God, and fully to enjoy him forever.</div></div>
-<div class="std-art"><div class="std-art-n">Q. 2.</div><div class="std-art-t">How doth it appear that there is a God? <strong>A.</strong> The very light of nature in man, and the works of God, declare plainly that there is a God; but his Word and Spirit only do sufficiently and effectually reveal him unto men for their salvation.</div></div>
-<div class="std-art"><div class="std-art-n">Q. 3.</div><div class="std-art-t">What is the Word of God? <strong>A.</strong> The holy Scriptures of the Old and New Testaments are the Word of God, the only rule of faith and obedience.</div></div>
-<div class="std-art"><div class="std-art-n">Q. 4.</div><div class="std-art-t">How doth it appear that the Scriptures are the Word of God? <strong>A.</strong> The Scriptures manifest themselves to be the Word of God, by their majesty and purity; by the consent of all the parts, and the scope of the whole, which is to give all glory to God; by their light and power to convince and convert sinners, to comfort and build up believers unto salvation: but the Spirit of God bearing witness by and with the Scriptures in the heart of man, is alone able fully to persuade it that they are the very Word of God.</div></div></div>
-
-<div class="std-ch"><div class="std-ch-h">Of Christ the Mediator</div>
-<div class="std-art"><div class="std-art-n">Q. 36.</div><div class="std-art-t">Who is the Mediator of the covenant of grace? <strong>A.</strong> The only Mediator of the covenant of grace is the Lord Jesus Christ, who, being the eternal Son of God, of one substance and equal with the Father, in the fullness of time became man, and so was and continues to be God and man, in two entire distinct natures, and one person, forever.</div></div>
-<div class="std-art"><div class="std-art-n">Q. 38.</div><div class="std-art-t">Why was it requisite that the Mediator should be God? <strong>A.</strong> It was requisite that the Mediator should be God, that he might sustain and keep the human nature from sinking under the infinite wrath of God, and the power of death; give worth and efficacy to his sufferings, obedience, and intercession; and to satisfy God's justice, procure his favor, purchase a peculiar people, give his Spirit to them, conquer all their enemies, and bring them to everlasting salvation.</div></div></div>
-
-<div class="std-ch"><div class="std-ch-h">Of the Church and Sacraments</div>
-<div class="std-art"><div class="std-art-n">Q. 62.</div><div class="std-art-t">What is the visible Church? <strong>A.</strong> The visible Church is a society made up of all such as in all ages and places of the world do profess the true religion, and of their children.</div></div>
-<div class="std-art"><div class="std-art-n">Q. 63.</div><div class="std-art-t">What are the special privileges of the visible Church? <strong>A.</strong> The visible Church hath the privilege of being under God's special care and government; of being protected and preserved in all ages, notwithstanding the opposition of all enemies; and of enjoying the communion of saints, the ordinary means of salvation, and offers of grace by Christ to all the members of it in the ministry of the gospel, testifying, that whosoever believes in him shall be saved, and excluding none that will come unto him.</div></div>
-<div class="std-art"><div class="std-art-n">Q. 65.</div><div class="std-art-t">What special things are we to consider in reading the Scriptures? <strong>A.</strong> In reading the Scriptures we are to attend: First, to what we read with diligence, attention, and reverence, as the Word of God. Secondly, to come unto it with a meek and teachable spirit, as those that desire to know, believe, and obey the will of God. Thirdly, to meditate on what we read. Fourthly, to write it in our hearts. Fifthly, to make a diligent use of those means, whereunto God hath appointed the Scriptures to be a blessing unto us.</div></div></div>
-
-<div class="std-ch"><div class="std-ch-h">Of the Ten Commandments</div>
-<div class="std-art"><div class="std-art-n">Q. 98.</div><div class="std-art-t">Where is the moral law summarily comprehended? <strong>A.</strong> The moral law is summarily comprehended in the ten commandments, which were delivered by the voice of God upon Mount Sinai, and written by him in two tables of stone; and are recorded in the twentieth chapter of Exodus. The four first commandments containing our duty to God, and the other six our duty to man.</div></div>
-<div class="std-art"><div class="std-art-n">Q. 99.</div><div class="std-art-t">What rules are to be observed for the right understanding of the ten commandments? <strong>A.</strong> For the right understanding of the ten commandments, these rules are to be observed: That the law is perfect, and bindeth everyone to full conformity in the whole man unto the righteousness thereof, and unto entire obedience forever; so as to require the utmost perfection of every duty, and to forbid the least degree of every sin. That it is spiritual, and so reacheth the understanding, will, affections, and all other powers of the soul; as well as words, works, and gestures. That one and the same thing, in divers respects, is required or forbidden in several commandments. That where a duty is commanded, the contrary sin is forbidden; and, where a sin is forbidden, the contrary duty is commanded. That where a promise is annexed, the contrary threatening is included; and, where a threatening is annexed, the contrary promise is included. That the same things are sometimes expressly required or forbidden in more general or more particular terms.</div></div></div>
-`;}
-
-// ── WESTMINSTER SHORTER CATECHISM
-function getWSC(){return`
-<div class="std-ch"><div class="std-ch-h">Of Man's Chief End and God's Word</div>
-<div class="std-art"><div class="std-art-n">Q. 1.</div><div class="std-art-t">What is the chief end of man? <strong>A.</strong> Man's chief end is to glorify God, and to enjoy him forever.</div></div>
-<div class="std-art"><div class="std-art-n">Q. 2.</div><div class="std-art-t">What rule hath God given to direct us how we may glorify and enjoy him? <strong>A.</strong> The Word of God, which is contained in the Scriptures of the Old and New Testaments, is the only rule to direct us how we may glorify and enjoy him.</div></div>
-<div class="std-art"><div class="std-art-n">Q. 3.</div><div class="std-art-t">What do the Scriptures principally teach? <strong>A.</strong> The Scriptures principally teach what man is to believe concerning God, and what duty God requires of man.</div></div></div>
-
-<div class="std-ch"><div class="std-ch-h">Of God</div>
-<div class="std-art"><div class="std-art-n">Q. 4.</div><div class="std-art-t">What is God? <strong>A.</strong> God is a Spirit, infinite, eternal, and unchangeable, in his being, wisdom, power, holiness, justice, goodness, and truth.</div></div>
-<div class="std-art"><div class="std-art-n">Q. 5.</div><div class="std-art-t">Are there more Gods than one? <strong>A.</strong> There is but one only, the living and true God.</div></div>
-<div class="std-art"><div class="std-art-n">Q. 6.</div><div class="std-art-t">How many persons are there in the Godhead? <strong>A.</strong> There are three persons in the Godhead; the Father, the Son, and the Holy Ghost; and these three are one God, the same in substance, equal in power and glory.</div></div></div>
-
-<div class="std-ch"><div class="std-ch-h">Of Man's Sin and Misery</div>
-<div class="std-art"><div class="std-art-n">Q. 14.</div><div class="std-art-t">What is sin? <strong>A.</strong> Sin is any want of conformity unto, or transgression of, the law of God.</div></div>
-<div class="std-art"><div class="std-art-n">Q. 17.</div><div class="std-art-t">Into what estate did the fall bring mankind? <strong>A.</strong> The fall brought mankind into an estate of sin and misery.</div></div>
-<div class="std-art"><div class="std-art-n">Q. 20.</div><div class="std-art-t">Did God leave all mankind to perish in the estate of sin and misery? <strong>A.</strong> God having, out of his mere good pleasure, from all eternity, elected some to everlasting life, did enter into a covenant of grace, to deliver them out of the estate of sin and misery, and to bring them into an estate of salvation by a Redeemer.</div></div></div>
-
-<div class="std-ch"><div class="std-ch-h">Of Christ the Redeemer</div>
-<div class="std-art"><div class="std-art-n">Q. 21.</div><div class="std-art-t">Who is the Redeemer of God's elect? <strong>A.</strong> The only Redeemer of God's elect is the Lord Jesus Christ, who, being the eternal Son of God, became man, and so was, and continueth to be, God and man in two distinct natures, and one person, forever.</div></div>
-<div class="std-art"><div class="std-art-n">Q. 25.</div><div class="std-art-t">How doth Christ execute the office of a priest? <strong>A.</strong> Christ executeth the office of a priest, in his once offering up of himself a sacrifice to satisfy divine justice, and reconcile us to God; and in making continual intercession for us.</div></div></div>
-
-<div class="std-ch"><div class="std-ch-h">Of the Law of God</div>
-<div class="std-art"><div class="std-art-n">Q. 39.</div><div class="std-art-t">What is the duty which God requireth of man? <strong>A.</strong> The duty which God requireth of man, is obedience to his revealed will.</div></div>
-<div class="std-art"><div class="std-art-n">Q. 40.</div><div class="std-art-t">What did God at first reveal to man for the rule of his obedience? <strong>A.</strong> The rule which God at first revealed to man for his obedience, was the moral law.</div></div>
-<div class="std-art"><div class="std-art-n">Q. 41.</div><div class="std-art-t">Where is the moral law summarily comprehended? <strong>A.</strong> The moral law is summarily comprehended in the ten commandments.</div></div>
-<div class="std-art"><div class="std-art-n">Q. 42.</div><div class="std-art-t">What is the sum of the ten commandments? <strong>A.</strong> The sum of the ten commandments is, to love the Lord our God with all our heart, with all our soul, with all our strength, and with all our mind; and our neighbor as ourselves.</div></div></div>
-
-<div class="std-ch"><div class="std-ch-h">Of the Sacraments</div>
-<div class="std-art"><div class="std-art-n">Q. 92.</div><div class="std-art-t">What is a sacrament? <strong>A.</strong> A sacrament is a holy ordinance instituted by Christ; wherein, by sensible signs, Christ, and the benefits of the new covenant, are represented, sealed, and applied to believers.</div></div>
-<div class="std-art"><div class="std-art-n">Q. 94.</div><div class="std-art-t">What is baptism? <strong>A.</strong> Baptism is a sacrament, wherein the washing with water in the name of the Father, and of the Son, and of the Holy Ghost, doth signify and seal our ingrafting into Christ, and partaking of the benefits of the covenant of grace, and our engagement to be the Lord's.</div></div>
-<div class="std-art"><div class="std-art-n">Q. 96.</div><div class="std-art-t">What is the Lord's supper? <strong>A.</strong> The Lord's supper is a sacrament, wherein, by giving and receiving bread and wine, according to the appointment of Jesus Christ, his death is showed forth; and the worthy receivers are, not after a corporal and carnal manner, but by faith, made partakers of his body and blood, with all his benefits, to their spiritual nourishment, and growth in grace.</div></div></div>
-`;}
-
-// ── BCO NOTE
-function getBCO(){return`
-<div class="std-ch"><div class="std-ch-h">Book of Church Order</div>
-<div class="std-art"><div class="std-art-n"></div><div class="std-art-t">The Book of Church Order is the constitutional document governing the polity, worship, and discipline of the General Assembly. The current edition is available at pcaac.org. The BCO is referenced throughout the GA Minutes corpus loaded in this application — use the search feature to find specific chapter and section references (e.g., search "BCO 20-4" or "BCO 42").</div></div></div>
-<div class="std-ch"><div class="std-ch-h">The Preliminary Principles</div>
-<div class="std-art"><div class="std-art-n">I.</div><div class="std-art-t">That "God alone is Lord of the conscience, and hath left it free from the doctrines and commandments of men which are in any thing contrary to his Word, or beside it in matters of faith or worship;" therefore, the rights of private judgment in all matters that respect religion are universal and inalienable.</div></div>
-<div class="std-art"><div class="std-art-n">II.</div><div class="std-art-t">In perfect consistency with the above, every Christian Church, or union or association of particular churches, is entitled to declare the terms of admission into its communion, and the qualifications of its ministers and members, as well as the whole system of its internal government which Christ hath appointed.</div></div>
-<div class="std-art"><div class="std-art-n">III.</div><div class="std-art-t">Our blessed Savior, for the edification of the visible Church, which is his body, hath appointed officers, not only to preach the Gospel and administer the Sacraments, but also to exercise discipline, for the preservation both of truth and duty; and that it is incumbent upon these officers and upon the whole Church in whose name they act, to censure or cast out the erroneous and scandalous, observing in all cases, the rules contained in the Word of God.</div></div>
-<div class="std-art"><div class="std-art-n">IV.</div><div class="std-art-t">That truth is in order to goodness; and the great touchstone of truth, its tendency to promote holiness, according to our Savior's rule, "By their fruits ye shall know them." And that no opinion can be more pernicious or more absurd than that which brings truth and falsehood upon a level, and represents it as of no consequence what a man's opinions are. On the contrary, we are persuaded that there is an inseparable connection between faith and practice, truth and duty. Otherwise, it would be of no consequence either to discover truth or to embrace it.</div></div>
-<div class="std-art"><div class="std-art-n">V.</div><div class="std-art-t">That while we assert for ourselves a liberty of conscience, as above mentioned, we are sensible of the duty we owe to our brethren and to the Church, which will not allow us to abuse this liberty to the injury of others, or of the whole body.</div></div>
-<div class="std-art"><div class="std-art-n">VI.</div><div class="std-art-t">That, in perfect consistency with the above, every Christian Church, or union or association of particular churches, is entitled to declare the terms of admission into its communion, and the qualifications of its ministers and members, as well as the whole system of its internal government which Christ hath appointed; that in the exercise of this right they may, notwithstanding, err; and that an error in this exercise, whether it be by making the terms of communion either too lax or too narrow, is in both cases sinful and injurious.</div></div></div>
-`;}
-
-// ── SERVICE WORKER REGISTRATION
-if('serviceWorker' in navigator){
-  window.addEventListener('load',()=>{
-    navigator.serviceWorker.register('sw.js').catch(()=>{});
-  });
+function typeLabel(t){return{ga_minutes:'Minutes',overture:'Overture',study_committee:'Study Report'}[t]||t;}
+function chunkTitle(c){
+  if(!c)return'';
+  if(c.doc_type==='overture')return c.title||(c.overture_number?`Overture ${c.overture_number} (${c.year})`:`Overture (${c.year})`);
+  if(c.doc_type==='ga_minutes'){const o=ord(c.ga_number);return`${o} General Assembly (${c.year})`;}
+  if(c.doc_type==='study_committee')return c.title||'Study Report';
+  return c.title||'Document';
+}
+function chunkMeta(c){
+  const p=[];
+  if(c.location)p.push(c.location);
+  if(c.moderator)p.push(c.moderator);
+  if((c.bco_refs||[]).length)p.push('BCO: '+c.bco_refs.slice(0,2).join(', '));
+  return p.join(' · ');
 }
 
+
+
+// ── SERVICE WORKER
+if('serviceWorker' in navigator){
+  window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
+}
 boot();
 </script>
 </body>
