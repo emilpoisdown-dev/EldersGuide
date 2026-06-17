@@ -1,8 +1,9 @@
 {
   "name": "Ruling and Teaching Elders Helper to the General Assembly",
   "short_name": "Elder's GA Guide",
-  "description": "Reference tool for commissioners preparing for the General Assembly. Includes GA Minutes 1973-present, Westminster Standards (1788), and constitutional documents.",
-  "start_url": "/",
+  "description": "Reference tool for ruling and teaching elders preparing for the General Assembly. 52 years of GA Minutes, overtures, and study reports — fully searchable.",
+  "start_url": "/EldersGuide/",
+  "scope": "/EldersGuide/",
   "display": "standalone",
   "background_color": "#111d33",
   "theme_color": "#1B2A4A",
