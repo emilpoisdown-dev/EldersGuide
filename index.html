@@ -169,8 +169,8 @@ body{font-family:var(--serif);color:var(--text);display:flex;flex-direction:colu
 .doc-meta{font-family:var(--sans);font-size:11px;color:#3A4A5A}
 .doc-meta strong{color:#0F2348}
 .tag-row{display:flex;flex-wrap:wrap;gap:4px;margin-top:9px}
-.tag{font-family:var(--sans);font-size:10px;padding:3px 8px;border-radius:10px;border:1px solid var(--rule);color:var(--slate);background:var(--cream-d);transition:background .12s,border-color .12s}
-.tag:hover{background:var(--cream-dd);border-color:var(--slate-l)}
+.tag{font-family:var(--sans);font-size:10px;padding:3px 8px;border-radius:10px;border:1px solid var(--rule);color:var(--slate);background:var(--cream-d);transition:background .12s,border-color .12s;cursor:pointer;display:inline-block;line-height:1.4;-webkit-tap-highlight-color:rgba(0,0,0,.1)}
+.tag:hover,.tag:active{background:var(--cream-dd);border-color:var(--slate-l)}
 .tag.bco:hover{background:rgba(245,168,0,.2);border-color:#F5A800}
 .tag.topic:hover{background:rgba(26,58,107,.16);border-color:#1A3A6B}
 .tag.bco{background:rgba(245,168,0,.12);border-color:rgba(245,168,0,.4);color:#7A5000}
@@ -349,6 +349,40 @@ body{font-family:var(--serif);color:var(--text);display:flex;flex-direction:colu
   .hdr-btns-desktop{display:none}
   #screen-doc .doc-back{display:flex}
 }
+
+/* ── IN-DOCUMENT SEARCH ── */
+#doc-find-bar{
+  background:#EEF4FF;border-bottom:2px solid #A0B8D8;
+  padding:8px 14px;display:flex;align-items:center;gap:8px;flex-shrink:0;
+  display:none;
+}
+#doc-find-bar.visible{display:flex}
+.find-input{
+  flex:1;background:#FFFFFF;border:2px solid #A0B8D8;
+  color:#0A1628;font-family:var(--sans);font-size:14px;
+  padding:8px 12px;border-radius:6px;outline:none;
+  -webkit-appearance:none;
+}
+.find-input:focus{border-color:#F5A800}
+.find-input::placeholder{color:#6A7A8A}
+.find-nav-btn{
+  background:#0F2348;color:#FFFFFF;border:none;
+  padding:8px 12px;border-radius:6px;font-family:var(--sans);
+  font-size:13px;cursor:pointer;white-space:nowrap;flex-shrink:0;
+}
+.find-nav-btn:hover{background:#1A3A6B}
+.find-nav-btn:disabled{background:#A0B8D8;cursor:not-allowed}
+.find-count{
+  font-family:var(--sans);font-size:12px;color:#1A3A6B;
+  white-space:nowrap;flex-shrink:0;min-width:60px;text-align:center;font-weight:bold;
+}
+.find-close{
+  background:none;border:none;color:#3A4A5A;font-size:20px;
+  cursor:pointer;padding:4px 6px;flex-shrink:0;line-height:1;
+}
+.find-close:hover{color:#0F2348}
+mark.find-hl{background:#F5A800;color:#0A1628;border-radius:2px;padding:0 1px}
+mark.find-hl.current{background:#FF6B00;color:#FFFFFF;border-radius:2px;padding:0 1px}
 </style>
 </head>
 <body>
@@ -364,7 +398,7 @@ body{font-family:var(--serif);color:var(--text);display:flex;flex-direction:colu
     <div class="hdr-icon"><img src="icon-192.png" alt="Elder's GA Guide" style="width:44px;height:44px;border-radius:4px;border:1px solid rgba(184,151,46,.4);display:block"></div>
     <div class="hdr-brand">
       <div class="hdr-eye" style="color:#F5A800">Ruling &amp; Teaching Elders · General Assembly</div>
-      <div class="hdr-title" style="color:#FFFFFF">Elder's GA Guide <span style="font-family:var(--sans);font-size:10px;color:var(--gold);letter-spacing:.08em;vertical-align:middle;margin-left:6px;opacity:.8">BETA v1</span></div>
+      <div class="hdr-title" style="color:#FFFFFF">Elder's GA Guide <span style="font-family:var(--sans);font-size:10px;color:var(--gold);letter-spacing:.08em;vertical-align:middle;margin-left:6px;opacity:.8">BETA v2</span></div>
     </div>
     <div class="hdr-btns-desktop">
       <button class="hdr-btn-d" onclick="showDesktopPanel('screen-search')">🔍 Search</button>
@@ -411,10 +445,22 @@ body{font-family:var(--serif);color:var(--text);display:flex;flex-direction:colu
       <button class="doc-back" onclick="goBack()">← Back</button>
       <div class="doc-toolbar-title" id="doc-toolbar-title">Document</div>
       <div class="doc-action-btns">
+        <button class="dac-btn" onclick="openFind()" title="Find in document (Ctrl+F)">🔍 Find</button>
         <button class="dac-btn" id="pdf-btn" onclick="openPDF()" style="display:none">📄 PDF</button>
         <button class="dac-btn" id="bk-btn" onclick="toggleBk()">🔖</button>
         <button class="dac-btn" id="dkt-btn" onclick="addToDocket()">+ Docket</button>
       </div>
+    </div>
+    <div id="doc-find-bar">
+      <input class="find-input" id="find-input" type="search"
+        placeholder="Find in document…"
+        oninput="onFind(this.value)"
+        onkeydown="findKeyNav(event)"
+        autocomplete="off" autocorrect="off" spellcheck="false">
+      <span class="find-count" id="find-count"></span>
+      <button class="find-nav-btn" id="find-prev" onclick="findNav(-1)" disabled>▲</button>
+      <button class="find-nav-btn" id="find-next" onclick="findNav(1)" disabled>▼</button>
+      <button class="find-close" onclick="closeFind()">✕</button>
     </div>
     <div id="doc-scroll">
       <div id="doc-content"></div>
@@ -777,7 +823,18 @@ function runSearch(){
       '<div class="ri-yr">'+esc(String(c.year||''))+' · '+typeLabel(c.doc_type)+'</div>'+
       '<div class="ri-t">'+esc(chunkTitle(c))+'</div>'+
       (snippet?'<div style="font-family:var(--sans);font-size:11px;color:#3A4A5A;line-height:1.55;margin-top:5px">'+snippet+'</div>':'');
-    div.onclick=()=>{openChunk(ci);if(window.innerWidth<=768)showScreen('screen-doc','');};
+    div.onclick=()=>{
+      openChunk(ci);
+      if(window.innerWidth<=768) showScreen('screen-doc','');
+      // After doc renders, open find bar with the search term and jump to first match
+      if(q && q.length >= 2){
+        setTimeout(()=>{
+          openFind();
+          document.getElementById('find-input').value = q;
+          runFind(q);
+        }, 120);
+      }
+    };
     res.appendChild(div);
   });
   if(dedupMatches.length>60) res.insertAdjacentHTML('beforeend',
@@ -795,8 +852,8 @@ function openChunk(i){
   const fullText=sibs.map(s=>s.text||'').join('\n\n');
   const allBco=[...new Set(sibs.flatMap(s=>s.bco_chapters||[]))];
   const allTopics=[...new Set(sibs.flatMap(s=>s.topics||[]))];
-  const bcoT=allBco.map(ch=>`<span class="tag bco" style="cursor:pointer" onclick="tagSearch('${esc(ch)}')" title="Search for ${esc(ch)}">${esc(ch)}</span>`).join('');
-  const topT=allTopics.map(t=>`<span class="tag topic" style="cursor:pointer" onclick="tagSearch('${t}')" title="Search for ${t}">${t}</span>`).join('');
+  const bcoT=allBco.map(ch=>`<button class="tag bco" onclick="tagSearch('${esc(ch)}')" title="Search for ${esc(ch)}">${esc(ch)}</button>`).join('');
+  const topT=allTopics.map(t=>`<button class="tag topic" onclick="tagSearch('${t}')" title="Search for ${t}">${t}</button>`).join('');
   const savedNote=notes[first.id]||'';
 
   document.getElementById('doc-toolbar-title').textContent=chunkTitle(first);
@@ -1022,7 +1079,13 @@ document.querySelectorAll('.overlay').forEach(el=>el.addEventListener('click',e=
 function tagSearch(term){
   document.getElementById('srch').value=term;
   showScreen('screen-search','bnav-search');
-  runSearch();
+  // Small delay to let screen transition complete before running search
+  setTimeout(()=>{
+    runSearch();
+    // Scroll results into view on mobile
+    const res=document.getElementById('search-results');
+    if(res) res.scrollTop=0;
+  }, 150);
 }
 
 // ── PDF VIEWER
@@ -1118,6 +1181,153 @@ function chunkMeta(c){
 }
 
 
+
+
+// ── IN-DOCUMENT FIND
+let findMatches = [];
+let findCurrent = -1;
+let findTimer = null;
+
+function openFind(){
+  const bar = document.getElementById('doc-find-bar');
+  bar.classList.add('visible');
+  const inp = document.getElementById('find-input');
+  inp.value = '';
+  inp.focus();
+  document.getElementById('find-count').textContent = '';
+  document.getElementById('find-prev').disabled = true;
+  document.getElementById('find-next').disabled = true;
+}
+
+function closeFind(){
+  document.getElementById('doc-find-bar').classList.remove('visible');
+  document.getElementById('find-input').value = '';
+  clearHighlights();
+  findMatches = [];
+  findCurrent = -1;
+}
+
+function onFind(q){
+  clearTimeout(findTimer);
+  findTimer = setTimeout(()=>runFind(q), 200);
+}
+
+function findKeyNav(e){
+  if(e.key === 'Enter'){
+    e.preventDefault();
+    findNav(e.shiftKey ? -1 : 1);
+  }
+  if(e.key === 'Escape') closeFind();
+}
+
+function clearHighlights(){
+  const body = document.getElementById('doc-content');
+  if(!body) return;
+  // Replace all mark tags with their text content
+  body.querySelectorAll('mark.find-hl').forEach(m => {
+    m.replaceWith(m.textContent);
+  });
+  // Normalize text nodes
+  body.normalize();
+}
+
+function runFind(q){
+  clearHighlights();
+  findMatches = [];
+  findCurrent = -1;
+
+  const countEl = document.getElementById('find-count');
+  const prevBtn = document.getElementById('find-prev');
+  const nextBtn = document.getElementById('find-next');
+
+  if(!q || q.length < 2){
+    countEl.textContent = '';
+    prevBtn.disabled = true;
+    nextBtn.disabled = true;
+    return;
+  }
+
+  const body = document.getElementById('doc-content');
+  if(!body) return;
+
+  // Walk text nodes and highlight matches
+  const walker = document.createTreeWalker(body, NodeFilter.SHOW_TEXT, {
+    acceptNode(node){
+      if(['SCRIPT','STYLE','TEXTAREA'].includes(node.parentElement.tagName))
+        return NodeFilter.FILTER_REJECT;
+      return NodeFilter.FILTER_ACCEPT;
+    }
+  });
+
+  const ql = q.toLowerCase();
+  const nodes = [];
+  let n;
+  while(n = walker.nextNode()) nodes.push(n);
+
+  for(const node of nodes){
+    const text = node.textContent;
+    const tl = text.toLowerCase();
+    let start = 0;
+    let idx;
+    const parts = [];
+    while((idx = tl.indexOf(ql, start)) >= 0){
+      if(idx > start) parts.push(document.createTextNode(text.slice(start, idx)));
+      const mark = document.createElement('mark');
+      mark.className = 'find-hl';
+      mark.textContent = text.slice(idx, idx + q.length);
+      parts.push(mark);
+      findMatches.push(mark);
+      start = idx + q.length;
+    }
+    if(parts.length > 0){
+      if(start < text.length) parts.push(document.createTextNode(text.slice(start)));
+      node.replaceWith(...parts);
+    }
+  }
+
+  if(findMatches.length > 0){
+    findCurrent = 0;
+    scrollToMatch(0);
+    countEl.textContent = '1 / ' + findMatches.length;
+    prevBtn.disabled = false;
+    nextBtn.disabled = false;
+  } else {
+    countEl.textContent = 'Not found';
+    prevBtn.disabled = true;
+    nextBtn.disabled = true;
+  }
+}
+
+function findNav(dir){
+  if(!findMatches.length) return;
+  // Remove current highlight
+  if(findCurrent >= 0) findMatches[findCurrent].classList.remove('current');
+  findCurrent = (findCurrent + dir + findMatches.length) % findMatches.length;
+  scrollToMatch(findCurrent);
+  document.getElementById('find-count').textContent =
+    (findCurrent + 1) + ' / ' + findMatches.length;
+}
+
+function scrollToMatch(i){
+  const m = findMatches[i];
+  if(!m) return;
+  m.classList.add('current');
+  m.scrollIntoView({behavior:'smooth', block:'center'});
+}
+
+// Keyboard shortcut Ctrl+F / Cmd+F when doc is open
+document.addEventListener('keydown', e => {
+  if((e.ctrlKey || e.metaKey) && e.key === 'f'){
+    const docScreen = document.getElementById('screen-doc');
+    if(docScreen && docScreen.classList.contains('active')){
+      e.preventDefault();
+      openFind();
+    }
+  }
+  if(e.key === 'Escape'){
+    closeFind();
+  }
+});
 
 // ── SERVICE WORKER
 if('serviceWorker' in navigator){
