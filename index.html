@@ -383,6 +383,11 @@ body{font-family:var(--serif);color:var(--text);display:flex;flex-direction:colu
 .find-close:hover{color:#0F2348}
 mark.find-hl{background:#F5A800;color:#0A1628;border-radius:2px;padding:0 1px}
 mark.find-hl.current{background:#FF6B00;color:#FFFFFF;border-radius:2px;padding:0 1px}
+
+mark.search-hl{
+  background:#F5A800;color:#0A1628;border-radius:2px;
+  padding:0 2px;font-style:normal;
+}
 </style>
 </head>
 <body>
@@ -824,16 +829,9 @@ function runSearch(){
       '<div class="ri-t">'+esc(chunkTitle(c))+'</div>'+
       (snippet?'<div style="font-family:var(--sans);font-size:11px;color:#3A4A5A;line-height:1.55;margin-top:5px">'+snippet+'</div>':'');
     div.onclick=()=>{
-      openChunk(ci);
+      // Pass search term so document pre-highlights matches on render
+      openChunk(ci, q || '');
       if(window.innerWidth<=768) showScreen('screen-doc','');
-      // After doc renders, open find bar with the search term and jump to first match
-      if(q && q.length >= 2){
-        setTimeout(()=>{
-          openFind();
-          document.getElementById('find-input').value = q;
-          runFind(q);
-        }, 120);
-      }
     };
     res.appendChild(div);
   });
@@ -842,7 +840,7 @@ function runSearch(){
 }
 
 // ── DOC VIEW
-function openChunk(i){
+function openChunk(i, highlightTerm){
   curChunk=corpus[i];
   const c=curChunk;
   // Stitch all sibling chunks into one document
@@ -878,7 +876,7 @@ function openChunk(i){
       </div>
       ${bcoT||topT?`<div class="tag-row">${bcoT}${topT}</div>`:''}
     </div>
-    <div class="doc-body">${fmtText(fullText)}</div>
+    <div class="doc-body">${highlightTerm ? fmtTextWithHighlight(fullText, highlightTerm) : fmtText(fullText)}</div>
     <div class="notes-wrap">
       <span class="notes-lbl">Personal Notes</span>
       <textarea class="notes-ta" id="notes-field" placeholder="Add your notes on this document…" oninput="saveNote()">${esc(savedNote)}</textarea>
@@ -890,6 +888,20 @@ function openChunk(i){
   if(window.innerWidth<=768){
     showScreen('screen-doc','');
   }
+}
+
+// Pre-highlight search term in rendered text
+function fmtTextWithHighlight(t, q){
+  if(!t || !q) return fmtText(t);
+  const formatted = fmtText(t);
+  if(!q || q.length < 2) return formatted;
+  // Highlight in the already-escaped HTML — wrap term matches
+  const escaped = q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
+  const re = new RegExp('('+escaped+')','gi');
+  // Only highlight inside text content, not inside HTML tags
+  return formatted.replace(/>([^<]+)</g, (match, text) => {
+    return '>' + text.replace(re, '<mark class="search-hl">$1</mark>') + '<';
+  });
 }
 
 function fmtText(t){
@@ -1314,6 +1326,27 @@ function scrollToMatch(i){
   m.classList.add('current');
   m.scrollIntoView({behavior:'smooth', block:'center'});
 }
+
+// Close find bar when tapping outside it
+document.addEventListener('click', e => {
+  const bar = document.getElementById('doc-find-bar');
+  if(!bar || !bar.classList.contains('visible')) return;
+  // If click is outside the find bar, close it
+  if(!bar.contains(e.target) && e.target.id !== 'find-input'){
+    // Don't close if they clicked the Find button itself
+    if(e.target.closest && e.target.closest('.dac-btn') && e.target.textContent.includes('Find')) return;
+    closeFind();
+  }
+});
+
+// Also close on scroll (user started reading)
+document.getElementById('doc-scroll') && document.getElementById('doc-scroll').addEventListener('scroll', () => {
+  // Don't close immediately on scroll — only if no active search
+  if(findMatches.length === 0){
+    const bar = document.getElementById('doc-find-bar');
+    if(bar && bar.classList.contains('visible')) closeFind();
+  }
+});
 
 // Keyboard shortcut Ctrl+F / Cmd+F when doc is open
 document.addEventListener('keydown', e => {
