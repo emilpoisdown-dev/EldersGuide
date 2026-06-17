@@ -177,7 +177,10 @@ body{font-family:var(--serif);color:var(--text);display:flex;flex-direction:colu
 .doc-meta{font-family:var(--sans);font-size:11px;color:var(--slate-l)}
 .doc-meta strong{color:var(--slate)}
 .tag-row{display:flex;flex-wrap:wrap;gap:4px;margin-top:9px}
-.tag{font-family:var(--sans);font-size:10px;padding:3px 8px;border-radius:10px;border:1px solid var(--rule);color:var(--slate);background:var(--cream-d)}
+.tag{font-family:var(--sans);font-size:10px;padding:3px 8px;border-radius:10px;border:1px solid var(--rule);color:var(--slate);background:var(--cream-d);transition:background .12s,border-color .12s}
+.tag:hover{background:var(--cream-dd);border-color:var(--slate-l)}
+.tag.bco:hover{background:rgba(27,42,74,.12);border-color:var(--navy)}
+.tag.topic:hover{background:rgba(184,151,46,.18);border-color:var(--gold)}
 .tag.bco{background:rgba(27,42,74,.06);border-color:rgba(27,42,74,.18);color:var(--navy)}
 .tag.topic{background:rgba(184,151,46,.09);border-color:rgba(184,151,46,.28);color:var(--gold-dim)}
 .doc-body{font-size:15px;line-height:1.9;color:var(--text);max-width:680px}
@@ -332,7 +335,7 @@ body{font-family:var(--serif);color:var(--text);display:flex;flex-direction:colu
     <div class="hdr-icon"><img src="icon-192.png" alt="Elder's GA Guide" style="width:44px;height:44px;border-radius:4px;border:1px solid rgba(184,151,46,.4);display:block"></div>
     <div class="hdr-brand">
       <div class="hdr-eye">Ruling &amp; Teaching Elders · General Assembly</div>
-      <div class="hdr-title">Elder's GA Guide</div>
+      <div class="hdr-title">Elder's GA Guide <span style="font-family:var(--sans);font-size:10px;color:var(--gold);letter-spacing:.08em;vertical-align:middle;margin-left:6px;opacity:.8">BETA v1</span></div>
     </div>
     <div class="hdr-btns-desktop">
       <button class="hdr-btn-d" onclick="showDesktopPanel('screen-search')">🔍 Search</button>
@@ -363,7 +366,7 @@ body{font-family:var(--serif);color:var(--text);display:flex;flex-direction:colu
   <div class="screen" id="screen-search">
     <div class="search-bar">
       <input class="srch-input" id="srch" type="search" placeholder="Search all documents…"
-        oninput="onSearch(this)" autocomplete="off" autocorrect="off" spellcheck="false">
+        oninput="onSearch(this)" autocomplete="off" autocorrect="off" spellcheck="false" autocapitalize="off">
       <button class="srch-clear" onclick="clearSearch()">✕</button>
     </div>
     <div class="filter-row">
@@ -495,7 +498,7 @@ body{font-family:var(--serif);color:var(--text);display:flex;flex-direction:colu
     <span class="bnav-icon">📜</span>
     <span class="bnav-label">Browse</span>
   </button>
-  <button class="bnav-btn" id="bnav-search" onclick="showScreen('screen-search','bnav-search')">
+  <button class="bnav-btn" id="bnav-search" onclick="showScreen('screen-search','bnav-search');setTimeout(()=>document.getElementById('srch').focus(),200)">
     <span class="bnav-icon">🔍</span>
     <span class="bnav-label">Search</span>
   </button>
@@ -675,6 +678,12 @@ function renderList(items,container,reset){
 // ── SEARCH
 function onSearch(el){
   clearTimeout(srchTimer);
+  // If field is empty, reset
+  if(!el.value.trim()){
+    document.getElementById('search-results').innerHTML=
+      '<div style="padding:20px 16px;font-family:var(--sans);font-size:13px;color:#3a5068;font-style:italic">Enter a search term above.</div>';
+    return;
+  }
   srchTimer=setTimeout(runSearch,350);
 }
 function clearSearch(){
@@ -759,8 +768,8 @@ function openChunk(i){
   const fullText=sibs.map(s=>s.text||'').join('\n\n');
   const allBco=[...new Set(sibs.flatMap(s=>s.bco_chapters||[]))];
   const allTopics=[...new Set(sibs.flatMap(s=>s.topics||[]))];
-  const bcoT=allBco.map(ch=>`<span class="tag bco">${esc(ch)}</span>`).join('');
-  const topT=allTopics.map(t=>`<span class="tag topic">${t}</span>`).join('');
+  const bcoT=allBco.map(ch=>`<span class="tag bco" style="cursor:pointer" onclick="tagSearch('${esc(ch)}')" title="Search for ${esc(ch)}">${esc(ch)}</span>`).join('');
+  const topT=allTopics.map(t=>`<span class="tag topic" style="cursor:pointer" onclick="tagSearch('${t}')" title="Search for ${t}">${t}</span>`).join('');
   const savedNote=notes[first.id]||'';
 
   document.getElementById('doc-toolbar-title').textContent=chunkTitle(first);
@@ -927,6 +936,13 @@ function om(id){document.getElementById(id).classList.add('open');}
 function cm(id){document.getElementById(id).classList.remove('open');}
 function openAbout(){om('m-about');}
 document.querySelectorAll('.overlay').forEach(el=>el.addEventListener('click',e=>{if(e.target===el)el.classList.remove('open');}));
+
+// Tag click — jump to search with that term
+function tagSearch(term){
+  document.getElementById('srch').value=term;
+  showScreen('screen-search','bnav-search');
+  runSearch();
+}
 
 // ── UTILITIES
 function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
