@@ -184,12 +184,49 @@ body{font-family:var(--serif);color:var(--text);display:flex;flex-direction:colu
 .tag.topic:hover{background:rgba(184,151,46,.18);border-color:var(--gold)}
 .tag.bco{background:rgba(27,42,74,.06);border-color:rgba(27,42,74,.18);color:var(--navy)}
 .tag.topic{background:rgba(184,151,46,.09);border-color:rgba(184,151,46,.28);color:var(--gold-dim)}
-.doc-body{font-size:15px;line-height:1.9;color:var(--text);max-width:680px}
+.doc-body{font-size:15px;line-height:1.9;color:var(--text);max-width:720px}
 .doc-body p{margin-bottom:14px;text-align:left}
-.doc-body h3{font-size:13px;font-family:var(--sans);font-weight:bold;color:var(--navy);
-  margin:20px 0 8px;letter-spacing:.04em;text-transform:uppercase;
+.doc-body h3{font-size:12px;font-family:var(--sans);font-weight:bold;color:var(--navy);
+  margin:22px 0 8px;letter-spacing:.06em;text-transform:uppercase;
   border-bottom:1px solid var(--rule);padding-bottom:4px}
-.doc-body br+br{display:none}
+.doc-section-h{
+  font-family:var(--sans);font-size:14px;font-weight:bold;color:var(--navy);
+  margin:24px 0 8px;padding:8px 12px;
+  background:var(--cream-d);border-left:3px solid var(--gold);
+  border-radius:0 2px 2px 0;
+}
+.doc-table{
+  display:grid;margin:14px 0 18px;
+  border:1px solid var(--rule);border-radius:2px;overflow:hidden;
+  font-family:var(--sans);font-size:12px;
+}
+.doc-table-row{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));
+  border-bottom:1px solid var(--rule-l);
+}
+.doc-table-row:last-child{border-bottom:none}
+.doc-table-row:nth-child(even){background:var(--cream-d)}
+.doc-table-cell{
+  padding:6px 10px;color:var(--text);border-right:1px solid var(--rule-l);word-break:break-word;
+}
+.doc-table-cell:last-child{border-right:none}
+.doc-resolution{
+  background:rgba(27,42,74,.04);border-left:3px solid var(--navy);
+  padding:10px 14px;margin:12px 0;font-style:italic;
+  font-size:14px;line-height:1.7;border-radius:0 2px 2px 0;
+}
+.pdf-banner{
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+  background:var(--navy);color:var(--cream);
+  padding:10px 14px;margin-bottom:20px;border-radius:2px;
+  font-family:var(--sans);font-size:12px;
+}
+.pdf-banner-btn{
+  background:var(--gold);color:var(--navy-d);border:none;
+  padding:7px 14px;border-radius:4px;font-family:var(--sans);
+  font-size:12px;font-weight:bold;cursor:pointer;white-space:nowrap;flex-shrink:0;
+}
+.pdf-banner-btn:hover{background:var(--gold-l)}
 .notes-wrap{margin-top:24px;padding-top:16px;border-top:1px solid var(--rule)}
 .notes-lbl{font-family:var(--sans);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--slate-l);margin-bottom:7px;display:block}
 .notes-ta{width:100%;min-height:100px;border:1px solid var(--rule);border-radius:6px;padding:10px 12px;
@@ -383,6 +420,7 @@ body{font-family:var(--serif);color:var(--text);display:flex;flex-direction:colu
       <button class="doc-back" onclick="goBack()">← Back</button>
       <div class="doc-toolbar-title" id="doc-toolbar-title">Document</div>
       <div class="doc-action-btns">
+        <button class="dac-btn" id="pdf-btn" onclick="openPDF()" style="display:none">📄 PDF</button>
         <button class="dac-btn" id="bk-btn" onclick="toggleBk()">🔖</button>
         <button class="dac-btn" id="dkt-btn" onclick="addToDocket()">+ Docket</button>
       </div>
@@ -529,7 +567,6 @@ body{font-family:var(--serif);color:var(--text);display:flex;flex-direction:colu
         <li>GA Minutes 1973–present — pcahistory.org</li>
         <li>Overtures 2019–2026 — pcaga.org / pcaac.org</li>
         <li>Study Committee Reports — pcahistory.org</li>
-        <li>Westminster Standards — Public domain (1788)</li>
       </ul>
       <div style="margin-top:16px;padding:12px 14px;background:var(--cream-d);border-left:3px solid var(--gold-dim);font-family:var(--sans);font-size:11px;color:var(--slate);line-height:1.65">
         Not sanctioned, endorsed, or affiliated with the General Assembly or any of its official bodies. Verify against official sources before relying on this app for Assembly business.
@@ -773,9 +810,15 @@ function openChunk(i){
 
   document.getElementById('doc-toolbar-title').textContent=chunkTitle(first);
   updateBkBtn();
+  updatePDFBtn();
   document.getElementById('dkt-btn').textContent='+ Docket';
 
-  document.getElementById('doc-content').innerHTML=`
+  const pdfUrl = curChunk && curChunk.doc_type==='ga_minutes' ? GA_PDF_URLS[curChunk.ga_number] : null;
+  const pdfBanner = pdfUrl ? `<div class="pdf-banner">
+    <span>📄 Original formatted PDF available from pcahistory.org</span>
+    <button class="pdf-banner-btn" onclick="window.open('${pdfUrl}','_blank')">View Original PDF →</button>
+  </div>` : '';
+  document.getElementById('doc-content').innerHTML=pdfBanner+`
     <div class="doc-hdr">
       <div class="doc-eye">${typeLabel(first.doc_type)} · ${first.year||''} ${first.era?'· '+first.era:''}</div>
       <div class="doc-title">${esc(chunkTitle(first))}</div>
@@ -803,27 +846,78 @@ function openChunk(i){
 
 function fmtText(t){
   if(!t) return '';
-  // Clean common PDF extraction artifacts
+
+  // ── STEP 1: Fix OCR artifacts
   t = t
-    .replace(/\f/g, '')                          // form feeds
-    .replace(/[ \t]{3,}/g, ' ')                  // excessive spaces
-    .replace(/\.{4,}/g, ' ')                     // dot leaders (.......)
-    .replace(/_{4,}/g, '')                        // underscores used as lines
-    .replace(/\n{3,}/g, '\n\n')                  // excessive blank lines
-    .replace(/^\s*\d+\s*$/gm, '')               // lone page numbers
-    .replace(/([A-Z]{2,}\s){4,}/g, m => {        // soften ALL-CAPS runs
-      return m.split(' ').map(w => w[0] + w.slice(1).toLowerCase()).join(' ');
-    });
-  const lines = t.split(/\n\n+/);
-  return lines.map(para => {
-    para = para.trim();
-    if(!para) return '';
-    // Detect headings: short all-caps lines
-    if(/^[A-Z][A-Z\s,.:;\-]{8,60}$/.test(para) && para.split(' ').length < 10){
-      return `<h3>${esc(para)}</h3>`;
+    .replace(/\f/g,'\n\n')                        // form feeds → paragraph break
+    .replace(/\r\n/g,'\n')
+    .replace(/([a-z])- *\n([a-z])/g,'$1$2')       // fix hyphenated line breaks: "Pres-\nbyterial" → "Presbyterian"
+    .replace(/([A-Za-z]) {2,}([a-z])/g,'$1$2')    // fix OCR spaces mid-word: "Continuin g" → "Continuing"
+    .replace(/\.{5,}/g,'')                         // dot leaders
+    .replace(/_{4,}/g,'')                           // underscore rules
+    .replace(/\t/g,' ')
+    .replace(/[ ]{3,}/g,'  ')                       // normalize spaces
+    .replace(/^\s*\d{1,4}\s*$/gm,'')              // lone page numbers
+    .replace(/\n{4,}/g,'\n\n\n');                  // max 3 newlines
+
+  // ── STEP 2: Split into blocks
+  const blocks = t.split(/\n\n+/);
+  const out = [];
+
+  for(let block of blocks){
+    block = block.trim();
+    if(!block) continue;
+
+    const lines = block.split('\n').map(l=>l.trim()).filter(Boolean);
+    if(!lines.length) continue;
+    const first = lines[0];
+    const allText = lines.join(' ');
+
+    // ── Numbered section heading: "1. Opening Worship" or "SECTION 4."
+    if(/^\d{1,2}\.\s+[A-Z]/.test(first) && lines.length <= 3){
+      out.push('<div class="doc-section-h">'+esc(allText)+'</div>');
+      continue;
     }
-    return `<p>${esc(para).replace(/\n/g,'<br>')}</p>`;
-  }).filter(Boolean).join('');
+
+    // ── ALL CAPS short heading
+    if(/^[A-Z][A-Z\s\-,\.]{6,}$/.test(first) && first.length < 80 && lines.length <= 2){
+      // Soften to title case
+      const titled = first.split(' ').map(w=>w.length>3?w[0]+w.slice(1).toLowerCase():w.toLowerCase()).join(' ');
+      out.push('<h3>'+esc(titled)+'</h3>');
+      continue;
+    }
+
+    // ── Table detection: 3+ lines where each has 2+ columns of data separated by spaces
+    const looksTabular = lines.length >= 3 && lines.filter(l=>{
+      const parts = l.split(/\s{2,}/);
+      return parts.length >= 2 && parts[0].length > 2;
+    }).length >= lines.length * 0.6;
+
+    if(looksTabular){
+      out.push('<div class="doc-table">');
+      for(const line of lines){
+        const cols = line.split(/\s{2,}/).filter(Boolean);
+        if(cols.length >= 2){
+          out.push('<div class="doc-table-row">'+cols.map(c=>'<span class="doc-table-cell">'+esc(c)+'</span>').join('')+'</div>');
+        } else {
+          out.push('<div class="doc-table-row"><span class="doc-table-cell" style="grid-column:1/-1">'+esc(line)+'</span></div>');
+        }
+      }
+      out.push('</div>');
+      continue;
+    }
+
+    // ── Resolution/Overture format: "WHEREAS" / "RESOLVED"
+    if(/^WHEREAS|^RESOLVED|^BE IT|^THEREFORE/i.test(first)){
+      out.push('<div class="doc-resolution">'+esc(allText).replace(/\n/g,'<br>')+'</div>');
+      continue;
+    }
+
+    // ── Regular paragraph
+    out.push('<p>'+esc(allText).replace(/\n/g,' ')+'</p>');
+  }
+
+  return out.join('\n');
 }
 let ntimer;
 function saveNote(){
@@ -918,7 +1012,7 @@ function renderWelcome(noCorpus){
     <img src="icon-192.png" alt="Elder's GA Guide" style="width:80px;height:80px;border-radius:8px;border:2px solid rgba(184,151,46,.4);margin-bottom:16px;display:block">
     <div class="w-h">Elder's GA Guide</div>
     <div class="w-rule"></div>
-    <div class="w-p">Full General Assembly record ${minY}–${maxY} plus Westminster Standards. Tap a tab above to browse, or use Search.</div>
+    <div class="w-p">Full General Assembly record ${minY}–${maxY}. Search and browse all overtures, minutes, and study reports. Tap a tab above to browse, or use Search.</div>
     <div class="w-stats">
       <div class="stat"><div class="stat-n">${corpus.length.toLocaleString()}</div><div class="stat-l">Docs</div></div>
       <div class="stat"><div class="stat-n">${years.length}</div><div class="stat-l">GAs</div></div>
@@ -938,6 +1032,79 @@ function tagSearch(term){
   document.getElementById('srch').value=term;
   showScreen('screen-search','bnav-search');
   runSearch();
+}
+
+// ── PDF VIEWER
+// Maps GA number to pcahistory.org PDF URL
+const GA_PDF_URLS = {
+  1:'https://www.pcahistory.org/pca/ga/1st_pcaga_1973.pdf',
+  2:'https://www.pcahistory.org/pca/ga/2nd_pcaga_1974.pdf',
+  3:'https://www.pcahistory.org/pca/ga/3rd_pcaga_1975.pdf',
+  4:'https://www.pcahistory.org/pca/ga/4th_pcaga_1976.pdf',
+  5:'https://www.pcahistory.org/pca/ga/5th_pcaga_1977.pdf',
+  6:'https://www.pcahistory.org/pca/ga/6th_pcaga_1978.pdf',
+  7:'https://www.pcahistory.org/pca/ga/7th_pcaga_1979.pdf',
+  8:'https://www.pcahistory.org/pca/ga/8th_pcaga_1980.pdf',
+  9:'https://www.pcahistory.org/pca/ga/9th_pcaga_1981.pdf',
+  10:'https://www.pcahistory.org/pca/ga/10th_pcaga_1982.pdf',
+  11:'https://www.pcahistory.org/pca/ga/11th_pcaga_1983.pdf',
+  12:'https://www.pcahistory.org/pca/ga/12th_pcaga_1984.pdf',
+  13:'https://www.pcahistory.org/pca/ga/13th_pcaga_1985.pdf',
+  14:'https://www.pcahistory.org/pca/ga/14th_pcaga_1986.pdf',
+  15:'https://www.pcahistory.org/pca/ga/15th_pcaga_1987.pdf',
+  16:'https://www.pcahistory.org/pca/ga/16th_pcaga_1988.pdf',
+  17:'https://www.pcahistory.org/pca/ga/17th_pcaga_1989.pdf',
+  18:'https://www.pcahistory.org/pca/ga/18th_pcaga_1990.pdf',
+  19:'https://www.pcahistory.org/pca/ga/19th_pcaga_1991.pdf',
+  20:'https://www.pcahistory.org/pca/ga/20th_pcaga_1992.pdf',
+  21:'https://www.pcahistory.org/pca/ga/21st_pcaga_1993.pdf',
+  22:'https://www.pcahistory.org/pca/ga/22nd_pcaga_1994.pdf',
+  23:'https://www.pcahistory.org/pca/ga/23rd_pcaga_1995.pdf',
+  24:'https://www.pcahistory.org/pca/ga/24th_pcaga_1996.pdf',
+  25:'https://www.pcahistory.org/pca/ga/25th_pcaga_1997.pdf',
+  26:'https://www.pcahistory.org/pca/ga/26th_pcaga_1998.pdf',
+  27:'https://www.pcahistory.org/pca/ga/27th_pcaga_1999.pdf',
+  28:'https://www.pcahistory.org/pca/ga/28th_pcaga_2000.pdf',
+  29:'https://www.pcahistory.org/pca/ga/29th_pcaga_2001.pdf',
+  30:'https://www.pcahistory.org/pca/ga/30th_pcaga_2002.pdf',
+  31:'https://www.pcahistory.org/pca/ga/31st_pcaga_2003.pdf',
+  32:'https://www.pcahistory.org/pca/ga/32nd_pcaga_2004.pdf',
+  33:'https://www.pcahistory.org/pca/ga/33rd_pcaga_2005.pdf',
+  34:'https://www.pcahistory.org/pca/ga/34th_pcaga_2006.pdf',
+  35:'https://www.pcahistory.org/pca/ga/35th_pcaga_2007.pdf',
+  36:'https://www.pcahistory.org/pca/ga/36th_pcaga_2008.pdf',
+  37:'https://www.pcahistory.org/pca/ga/37th_pcaga_2009.pdf',
+  38:'https://www.pcahistory.org/pca/ga/38th_pcaga_2010.pdf',
+  39:'https://www.pcahistory.org/pca/ga/39th_pcaga_2011.pdf',
+  40:'https://www.pcahistory.org/pca/ga/40th_pcaga_2012.pdf',
+  41:'https://www.pcahistory.org/pca/ga/41st_pcaga_2013.pdf',
+  42:'https://www.pcahistory.org/pca/ga/42nd_pcaga_2014.pdf',
+  43:'https://www.pcahistory.org/pca/ga/43rd_pcaga_2015.pdf',
+  44:'https://www.pcahistory.org/pca/ga/44th_pcaga_2016.pdf',
+  45:'https://www.pcahistory.org/pca/ga/45th_pcaga_2017.pdf',
+  46:'https://www.pcahistory.org/pca/ga/46th_pcaga_2018.pdf',
+  47:'https://www.pcahistory.org/pca/ga/47th_pcaga_2019.pdf',
+  48:'https://www.pcahistory.org/pca/ga/48th_pcaga_2021.pdf',
+  49:'https://www.pcahistory.org/pca/ga/49th_pcaga_2022.pdf',
+  50:'https://www.pcahistory.org/pca/ga/50th_pcaga_2023.pdf',
+  51:'https://www.pcahistory.org/pca/ga/51st_pcaga_2024.pdf',
+  52:'https://www.pcahistory.org/pca/ga/52nd_pcaga_2025.pdf',
+};
+
+function openPDF(){
+  if(!curChunk) return;
+  const url = GA_PDF_URLS[curChunk.ga_number];
+  if(url) window.open(url,'_blank');
+}
+
+function updatePDFBtn(){
+  const btn = document.getElementById('pdf-btn');
+  if(!btn) return;
+  if(curChunk && curChunk.doc_type==='ga_minutes' && GA_PDF_URLS[curChunk.ga_number]){
+    btn.style.display='';
+  } else {
+    btn.style.display='none';
+  }
 }
 
 // ── UTILITIES
