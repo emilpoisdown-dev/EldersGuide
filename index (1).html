@@ -104,7 +104,7 @@ body{font-family:var(--serif);color:var(--text);display:flex;flex-direction:colu
 /* WELCOME */
 #welcome{display:flex;flex-direction:column;align-items:center;justify-content:center;
   min-height:60vh;padding:40px 20px;text-align:center}
-.w-cross{font-size:34px;margin-bottom:18px;opacity:.55}
+
 .w-h{font-size:24px;color:var(--navy);font-weight:normal;margin-bottom:6px}
 .w-rule{width:44px;height:2px;background:var(--gold);margin:10px auto 14px}
 .w-p{font-family:var(--sans);font-size:13px;color:var(--slate);line-height:1.75;max-width:460px;margin-bottom:22px}
@@ -176,7 +176,7 @@ body{font-family:var(--serif);color:var(--text);display:flex;flex-direction:colu
 .modal-x{background:none;border:none;font-size:19px;color:var(--slate-l);cursor:pointer;padding:2px 5px}
 .modal-x:hover{color:var(--navy)}
 .modal-body{padding:18px 22px 22px}
-.about-cross{font-size:30px;text-align:center;margin-bottom:10px}
+
 .about-h{font-size:18px;color:var(--navy);text-align:center;font-weight:normal;margin-bottom:3px}
 .about-rule{width:36px;height:2px;background:var(--gold);margin:9px auto 14px}
 .about-p{font-family:var(--sans);font-size:13px;color:var(--slate);line-height:1.7;margin-bottom:10px}
@@ -211,7 +211,7 @@ body{font-family:var(--serif);color:var(--text);display:flex;flex-direction:colu
 #loading{position:fixed;inset:0;background:var(--navy-d);z-index:999;display:flex;
   flex-direction:column;align-items:center;justify-content:center;gap:14px;transition:opacity .5s}
 #loading.done{opacity:0;pointer-events:none}
-.ld-cross{font-size:38px;animation:fi 1s ease}
+
 .ld-title{color:var(--cream);font-size:19px;font-weight:normal;font-family:var(--serif)}
 .ld-bar-w{width:240px;height:3px;background:rgba(255,255,255,.08);border-radius:2px;overflow:hidden}
 .ld-bar{height:100%;background:var(--gold);width:0%;transition:width .3s ease;border-radius:2px}
@@ -234,7 +234,6 @@ body{font-family:var(--serif);color:var(--text);display:flex;flex-direction:colu
 <body>
 
 <div id="loading">
-  <div class="ld-cross">✠</div>
   <div class="ld-title">Elder's GA Guide</div>
   <div class="ld-bar-w"><div class="ld-bar" id="ld-bar"></div></div>
   <div class="ld-sub" id="ld-sub">Loading corpus…</div>
@@ -314,7 +313,6 @@ body{font-family:var(--serif);color:var(--text);display:flex;flex-direction:colu
   <div class="modal">
     <div class="modal-hdr"><div class="modal-ttl">About</div><button class="modal-x" onclick="cm('m-about')">✕</button></div>
     <div class="modal-body">
-      <div class="about-cross">✠</div>
       <div class="about-h">Ruling and Teaching Elders<br>Helper to the General Assembly</div>
       <div class="about-rule"></div>
       <p class="about-p">A reference tool for commissioners preparing for the General Assembly. Search and browse the full record of Assembly proceedings from 1973 to the present, alongside the Westminster Standards and constitutional documents.</p>
@@ -612,13 +610,13 @@ document.querySelectorAll('.overlay').forEach(el=>el.addEventListener('click',e=
 function renderWelcome(noCorpus){
   const el=document.getElementById('welcome');
   if(noCorpus){
-    el.innerHTML=`<div class="w-cross">✠</div><div class="w-h">Corpus Not Found</div><div class="w-rule"></div>
+    el.innerHTML=`<div class="w-h">Corpus Not Found</div><div class="w-rule"></div>
     <div class="w-p">Place <strong>corpus_final.json</strong> and <strong>corpus_index.json</strong> in the same folder as this file, then reload.</div>`;
     updateStatus('No corpus loaded',true);return;
   }
   const years=idx.years_available||[];
   const minY=years[0]||1973,maxY=years[years.length-1]||2025;
-  el.innerHTML=`<div class="w-cross">✠</div><div class="w-h">Elder's GA Guide</div><div class="w-rule"></div>
+  el.innerHTML=`<div class="w-h">Elder's GA Guide</div><div class="w-rule"></div>
   <div class="w-p">Full record of General Assembly proceedings ${minY}–${maxY}, Westminster Standards (1788 WCF), and constitutional documents. Select a document in the left panel to begin.</div>
   <div class="w-stats">
     <div class="stat"><div class="stat-n">${corpus.length.toLocaleString()}</div><div class="stat-l">Documents</div></div>
