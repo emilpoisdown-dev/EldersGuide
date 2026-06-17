@@ -8,6 +8,7 @@
 <meta name="apple-mobile-web-app-title" content="Elder's GA Guide">
 <meta name="theme-color" content="#1B2A4A">
 <link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon-192.png" type="image/png">
 <link rel="apple-touch-icon" href="icon-192.png">
 <title>Elder's GA Guide</title>
 <style>
@@ -571,7 +572,6 @@ function done(noCorpus=false){
   if(!noCorpus){buildFilters();}
   renderWelcome(noCorpus);
   updateBkStatus();
-  loadStd();
 }
 function ld(msg,pct){document.getElementById('ld-sub').textContent=msg;document.getElementById('ld-bar').style.width=pct+'%';}
 function sleep(ms){return new Promise(r=>setTimeout(r,ms));}
@@ -592,7 +592,6 @@ function showDesktopPanel(id){
     const el=document.getElementById(p);
     if(el) el.classList.toggle('active', p===id && !el.classList.contains('active'));
   });
-  if(id==='screen-standards') loadStd();
   if(id==='screen-docket') renderDocket();
 }
 function goBack(){
@@ -898,9 +897,6 @@ function openFromDocket(id){
   if(i>=0){openChunk(i);showScreen('screen-doc','');
     document.querySelectorAll('.bnav-btn').forEach(b=>b.classList.remove('active'));}
 }
-
-
-function renderStd(key){loadStd();}
 
 // ── WELCOME
 function renderWelcome(noCorpus){
