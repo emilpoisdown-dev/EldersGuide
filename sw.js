@@ -1,4 +1,4 @@
-const CACHE = 'elders-ga-guide-v11';
+const CACHE = 'elders-ga-guide-v13';
 const ASSETS = ['/', '/index.html', '/manifest.json', '/icon-192.png', '/icon-512.png'];
 
 self.addEventListener('install', e => {

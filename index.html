@@ -388,6 +388,39 @@ mark.search-hl{
   background:#F5A800;color:#0A1628;border-radius:2px;
   padding:0 2px;font-style:normal;
 }
+
+/* ── FEEDBACK MODAL ── */
+.fb-field{margin-bottom:16px}
+.fb-label{display:block;font-family:var(--sans);font-size:11px;font-weight:bold;
+  letter-spacing:.08em;text-transform:uppercase;color:#1A3A6B;margin-bottom:8px}
+.fb-types{display:flex;flex-wrap:wrap;gap:6px}
+.fb-type{
+  background:#F0F6FF;border:2px solid #A0B8D8;color:#1A2A3A;
+  font-family:var(--sans);font-size:12px;padding:8px 12px;
+  border-radius:6px;cursor:pointer;transition:all .12s;
+  -webkit-tap-highlight-color:transparent;
+}
+.fb-type:hover,.fb-type:active{background:#E0EAF8;border-color:#1A3A6B}
+.fb-type.selected{background:#0F2348;border-color:#0F2348;color:#FFFFFF;font-weight:bold}
+.fb-textarea{
+  width:100%;min-height:110px;border:2px solid #A0B8D8;border-radius:6px;
+  padding:10px 12px;font-family:var(--serif);font-size:14px;color:#0A1628;
+  background:#FFFFFF;resize:vertical;outline:none;line-height:1.6;
+}
+.fb-textarea:focus{border-color:#F5A800}
+.fb-input{
+  width:100%;border:2px solid #A0B8D8;border-radius:6px;
+  padding:10px 12px;font-family:var(--sans);font-size:14px;color:#0A1628;
+  background:#FFFFFF;outline:none;-webkit-appearance:none;
+}
+.fb-input:focus{border-color:#F5A800}
+.fb-submit{
+  width:100%;padding:13px;background:#0F2348;color:#FFFFFF;border:none;
+  border-radius:6px;font-family:var(--sans);font-size:14px;font-weight:bold;
+  cursor:pointer;letter-spacing:.04em;transition:background .12s;
+}
+.fb-submit:hover{background:#1A3A6B}
+.fb-submit:disabled{background:#A0B8D8;cursor:not-allowed}
 </style>
 </head>
 <body>
@@ -410,6 +443,7 @@ mark.search-hl{
       <button class="hdr-btn-d" onclick="showDesktopPanel('screen-docket')">📋 Docket</button>
       <button class="hdr-btn-d" onclick="showDesktopPanel('screen-help')">? Help</button>
     </div>
+    <button class="hdr-about" onclick="openFeedback()" style="margin-right:6px">Feedback</button>
     <button class="hdr-about" onclick="openAbout()">About</button>
   </div>
 </header>
@@ -1362,11 +1396,148 @@ document.addEventListener('keydown', e => {
   }
 });
 
+
+// ── FEEDBACK
+let selectedFeedbackType = '';
+
+function openFeedback(){
+  // Reset form
+  selectedFeedbackType = '';
+  document.querySelectorAll('.fb-type').forEach(b => b.classList.remove('selected'));
+  document.getElementById('fb-text').value = '';
+  document.getElementById('fb-email').value = '';
+  const status = document.getElementById('fb-status');
+  status.style.display = 'none';
+  document.querySelector('.fb-submit').disabled = false;
+  document.querySelector('.fb-submit').textContent = 'Send Feedback →';
+  om('m-feedback');
+}
+
+function selectType(el){
+  document.querySelectorAll('.fb-type').forEach(b => b.classList.remove('selected'));
+  el.classList.add('selected');
+  selectedFeedbackType = el.dataset.type;
+}
+
+async function submitFeedback(){
+  const text = document.getElementById('fb-text').value.trim();
+  const email = document.getElementById('fb-email').value.trim();
+  const status = document.getElementById('fb-status');
+  const btn = document.querySelector('.fb-submit');
+
+  if(!selectedFeedbackType && !text){
+    status.style.display = 'block';
+    status.style.background = '#FFF3E0';
+    status.style.border = '1px solid #F5A800';
+    status.style.color = '#7A5000';
+    status.textContent = 'Please select a feedback type or add a description.';
+    return;
+  }
+
+  btn.disabled = true;
+  btn.textContent = 'Sending…';
+  status.style.display = 'none';
+
+  // Build feedback object
+  const feedback = {
+    type: selectedFeedbackType || 'general',
+    description: text,
+    email: email,
+    version: 'Beta v2',
+    timestamp: new Date().toISOString(),
+    userAgent: navigator.userAgent,
+    url: window.location.href,
+  };
+
+  // Send via Formspree (free, no backend needed)
+  // Replace xqeoojpp with your Formspree form ID
+  try {
+    const res = await fetch('https://formspree.io/f/xqeoojpp', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json', 'Accept': 'application/json'},
+      body: JSON.stringify({
+        type: feedback.type,
+        description: feedback.description,
+        email: feedback.email || 'not provided',
+        version: feedback.version,
+        timestamp: feedback.timestamp,
+        device: feedback.userAgent,
+      })
+    });
+
+    if(res.ok){
+      status.style.display = 'block';
+      status.style.background = '#E8F5E9';
+      status.style.border = '1px solid #2E7D32';
+      status.style.color = '#1A5A2A';
+      status.textContent = '✓ Feedback sent. Thank you.';
+      btn.textContent = 'Sent ✓';
+      // Auto-close after 2 seconds
+      setTimeout(()=>cm('m-feedback'), 2000);
+    } else {
+      throw new Error('Server error');
+    }
+  } catch(err) {
+    // Fallback — open email client with feedback pre-filled
+    const subject = encodeURIComponent('Elder\'s GA Guide Feedback — ' + (selectedFeedbackType || 'General'));
+    const body = encodeURIComponent(
+      'Feedback type: ' + (selectedFeedbackType || 'General') +
+      '\n\nDescription:\n' + text +
+      '\n\nVersion: Beta v2' +
+      '\nTimestamp: ' + new Date().toISOString()
+    );
+    window.location.href = 'mailto:fl16stuff@gmail.com?subject=' + subject + '&body=' + body;
+    btn.disabled = false;
+    btn.textContent = 'Send Feedback →';
+  }
+}
+
 // ── SERVICE WORKER
 if('serviceWorker' in navigator){
   window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
 }
 boot();
 </script>
+
+<!-- Feedback modal -->
+<div class="overlay" id="m-feedback">
+  <div class="modal">
+    <div class="modal-hdr">
+      <div class="modal-ttl">Send Feedback</div>
+      <button class="modal-x" onclick="cm('m-feedback')">✕</button>
+    </div>
+    <div class="modal-body">
+      <p style="font-family:var(--sans);font-size:13px;color:#1A2A3A;margin-bottom:16px;line-height:1.6">
+        Help improve Elder's GA Guide. Tell us what's broken, what's missing, or what's working well.
+      </p>
+
+      <div class="fb-field">
+        <label class="fb-label">Type of feedback</label>
+        <div class="fb-types">
+          <button class="fb-type" onclick="selectType(this)" data-type="bug">🐛 Something's broken</button>
+          <button class="fb-type" onclick="selectType(this)" data-type="feature">💡 Add this feature</button>
+          <button class="fb-type" onclick="selectType(this)" data-type="content">📄 Content issue</button>
+          <button class="fb-type" onclick="selectType(this)" data-type="praise">👍 Working well</button>
+          <button class="fb-type" onclick="selectType(this)" data-type="other">💬 Other</button>
+        </div>
+      </div>
+
+      <div class="fb-field">
+        <label class="fb-label" for="fb-text">Description</label>
+        <textarea class="fb-textarea" id="fb-text"
+          placeholder="Describe the issue, feature request, or feedback…"></textarea>
+      </div>
+
+      <div class="fb-field">
+        <label class="fb-label" for="fb-email">Your email <span style="font-weight:normal;color:#6A7A8A">(optional — if you want a reply)</span></label>
+        <input class="fb-input" id="fb-email" type="email" placeholder="you@example.com">
+      </div>
+
+      <div id="fb-status" style="display:none;padding:10px 12px;border-radius:4px;font-family:var(--sans);font-size:13px;margin-bottom:12px"></div>
+
+      <button class="fb-submit" onclick="submitFeedback()">Send Feedback →</button>
+    </div>
+  </div>
+</div>
 </body>
 </html>
