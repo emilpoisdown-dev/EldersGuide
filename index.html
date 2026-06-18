@@ -8,6 +8,8 @@
 <meta name="apple-mobile-web-app-title" content="Elder's GA Guide">
 <meta name="theme-color" content="#1B2A4A">
 <link rel="manifest" href="manifest.json">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=UnifrakturMaguntia&display=swap" rel="stylesheet">
 <link rel="icon" href="icon-192.png" type="image/png">
 <link rel="apple-touch-icon" href="icon-192.png">
 <title>Elder's GA Guide</title>
@@ -421,6 +423,22 @@ mark.search-hl{
 }
 .fb-submit:hover{background:#1A3A6B}
 .fb-submit:disabled{background:#A0B8D8;cursor:not-allowed}
+
+/* ── HOBBIT BANNER ── */
+.hobbit-banner{
+  text-align:center;
+  font-family:'UnifrakturMaguntia', 'Palatino Linotype', serif;
+  font-size:18px;
+  color:#F5A800;
+  background:#0A1A38;
+  padding:6px 16px 4px;
+  letter-spacing:.06em;
+  border-bottom:1px solid rgba(245,168,0,.2);
+  text-shadow: 0 1px 6px rgba(245,168,0,.4);
+}
+@media(max-width:480px){
+  .hobbit-banner{font-size:15px;padding:5px 12px 3px;}
+}
 </style>
 </head>
 <body>
@@ -432,11 +450,12 @@ mark.search-hl{
 </div>
 
 <header id="app-header">
-  <div class="hdr">
+  <div class="hobbit-banner">&#8220;I am going on an Adventure!&#8221;</div>
+<div class="hdr">
     <div class="hdr-icon"><img src="icon-192.png" alt="Elder's GA Guide" style="width:44px;height:44px;border-radius:4px;border:1px solid rgba(184,151,46,.4);display:block"></div>
     <div class="hdr-brand">
       <div class="hdr-eye" style="color:#F5A800">Ruling &amp; Teaching Elders · General Assembly</div>
-      <div class="hdr-title" style="color:#FFFFFF">Elder's GA Guide <span style="font-family:var(--sans);font-size:10px;color:var(--gold);letter-spacing:.08em;vertical-align:middle;margin-left:6px;opacity:.8">BETA v2</span></div>
+      <div class="hdr-title" style="color:#FFFFFF">Elder's GA Guide <span style="font-family:var(--sans);font-size:10px;color:var(--gold);letter-spacing:.08em;vertical-align:middle;margin-left:6px;opacity:.8">BETA v4</span></div>
     </div>
     <div class="hdr-btns-desktop">
       <button class="hdr-btn-d" onclick="showDesktopPanel('screen-search')">🔍 Search</button>
@@ -602,6 +621,12 @@ mark.search-hl{
         <div class="disc-lbl">Disclaimer</div>
         <p>This application is an independent reference tool created to assist ruling and teaching elders in preparing for the General Assembly. It is not sanctioned, endorsed, or affiliated with the General Assembly, the Administrative Committee, or any official body of the Assembly. All source documents are publicly available. Users should verify any information against official sources before relying on it for Assembly business.</p>
       </div>
+      <div style="margin:0 16px 20px;background:#FFFFFF;border:1px solid #A0B8D8;border-left:4px solid #0F2348;padding:14px 16px;border-radius:2px">
+        <div style="font-family:var(--sans);font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:#1A3A6B;font-weight:bold;margin-bottom:6px">Related Resource</div>
+        <div style="font-family:var(--sans);font-size:13px;color:#0A1628;font-weight:bold;margin-bottom:4px">Polity Matters</div>
+        <div style="font-family:var(--sans);font-size:12px;color:#3A4A5A;margin-bottom:8px;line-height:1.5">Additional resources for General Assembly commissioners.</div>
+        <a href="https://overtures26.replit.app/" target="_blank" style="display:inline-block;background:#0F2348;color:#FFFFFF;font-family:var(--sans);font-size:12px;font-weight:bold;padding:8px 14px;border-radius:6px;text-decoration:none">Visit Polity Matters →</a>
+      </div>
     </div>
   </div>
 
@@ -644,8 +669,13 @@ mark.search-hl{
         <li>Overtures 2019–2026 — pcaga.org / pcaac.org</li>
         <li>Study Committee Reports — pcahistory.org</li>
       </ul>
-      <div style="margin-top:16px;padding:12px 14px;background:var(--cream-d);border-left:3px solid var(--gold-dim);font-family:var(--sans);font-size:11px;color:var(--slate);line-height:1.65">
+      <div style="margin-top:16px;padding:12px 14px;background:#EEF4FF;border-left:3px solid #1A3A6B;font-family:var(--sans);font-size:11px;color:#1A2A3A;line-height:1.65">
         Not sanctioned, endorsed, or affiliated with the General Assembly or any of its official bodies. Verify against official sources before relying on this app for Assembly business.
+      </div>
+      <div style="margin-top:14px;padding:12px 14px;background:#FFFFFF;border:1px solid #A0B8D8;border-left:3px solid #0F2348;border-radius:2px">
+        <div style="font-family:var(--sans);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:#1A3A6B;font-weight:bold;margin-bottom:5px">Related Resource</div>
+        <div style="font-family:var(--sans);font-size:13px;color:#0A1628;font-weight:bold;margin-bottom:3px">Polity Matters</div>
+        <a href="https://overtures26.replit.app/" target="_blank" style="font-family:var(--sans);font-size:12px;color:#1A3A6B;font-weight:bold;text-decoration:underline">overtures26.replit.app →</a>
       </div>
     </div>
   </div>
