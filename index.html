@@ -439,6 +439,19 @@ mark.search-hl{
 @media(max-width:480px){
   .hobbit-banner{font-size:15px;padding:5px 12px 3px;}
 }
+
+.hdr-btn-polity{
+  text-decoration:none;
+  background:rgba(245,168,0,.15) !important;
+  border-color:rgba(245,168,0,.6) !important;
+  color:#F5A800 !important;
+  font-weight:bold;
+}
+.hdr-btn-polity:hover{
+  background:rgba(245,168,0,.28) !important;
+  border-color:#F5A800 !important;
+  color:#FFFFFF !important;
+}
 </style>
 </head>
 <body>
@@ -461,6 +474,7 @@ mark.search-hl{
       <button class="hdr-btn-d" onclick="showDesktopPanel('screen-search')">🔍 Search</button>
       <button class="hdr-btn-d" onclick="showDesktopPanel('screen-docket')">📋 Docket</button>
       <button class="hdr-btn-d" onclick="showDesktopPanel('screen-help')">? Help</button>
+      <a class="hdr-btn-d hdr-btn-polity" href="https://overtures26.replit.app/" target="_blank">📜 Polity Matters Overtures</a>
     </div>
     <button class="hdr-about" onclick="openFeedback()" style="margin-right:6px">Feedback</button>
     <button class="hdr-about" onclick="openAbout()">About</button>
@@ -650,6 +664,10 @@ mark.search-hl{
     <span class="bnav-icon">?</span>
     <span class="bnav-label">Help</span>
   </button>
+  <a class="bnav-btn" href="https://overtures26.replit.app/" target="_blank" style="text-decoration:none;color:#F5A800">
+    <span class="bnav-icon">📜</span>
+    <span class="bnav-label" style="color:#F5A800">Polity</span>
+  </a>
 </nav>
 
 <!-- About modal -->
